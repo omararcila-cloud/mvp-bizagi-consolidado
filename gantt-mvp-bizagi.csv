@@ -1,0 +1,42 @@
+ID,Frente,Tarea,Dependencia,Responsable,Duración (sem),Inicio,Fin,Ruta Crítica
+47,Extracciones,Parametrización actual Filenet,,Tecnología,0,TERMINADO,TERMINADO,SI
+48,Extracciones,Campos Portal Intermediarios,,Tecnología,1,2026-06-04,2026-06-10,SI
+18,Flujos,Flujo detallado conceptual,,Procesos/Operaciones,2,2026-06-04,2026-06-17,SI
+4,Datos,Modelos datos específicos por ramo,1,Int. Operacional,1,2026-06-04,2026-06-10,NO
+7,Formularios,Estructurar relación campos,6,Evol. Operacional,1,2026-06-04,2026-06-10,NO
+12,Integraciones,Entender actuales,11,Tecnología,1,2026-06-04,2026-06-10,NO
+13,Integraciones,Definir futuras,12,Tecnología,1,2026-06-11,2026-06-17,NO
+2,Datos,Construir relaciones datos (llaves),47;48,Int. Operacional,3,2026-06-11,2026-07-01,SI
+3,Datos,Consolidar tablas maestras,47;48,Int. Operacional,2,2026-06-11,2026-06-24,NO
+19,Flujos,Flujo técnico (arquitectura),11..18,Tecnología,1,2026-06-18,2026-06-24,SI
+8,Formularios,Definir experiencia actores,7,Evol. Operacional,3,2026-06-11,2026-07-01,NO
+40,Roles,Definir roles por actor,18,Procesos,2,2026-06-18,2026-07-01,NO
+41,Roles,Definir roles por área,18,Procesos,2,2026-06-18,2026-07-01,NO
+42,Roles,Relacionar por cargos,18,Procesos,2,2026-06-18,2026-07-01,NO
+26,Reglas Proceso,Consolidar torres Filenet,47,Int. Operacional,1,2026-06-04,2026-06-10,NO
+37,Reglas Motor,Consolidar reglas motor+Filenet,47,Int. Operacional,1,2026-06-04,2026-06-10,NO
+31,Reglas Asignación,Consolidar reglas motor+Filenet,47,Int. Operacional,1,2026-06-04,2026-06-10,NO
+61,Extracciones,Revisión y aprobación,47;48,Mesa Trabajo,1,2026-06-11,2026-06-17,NO
+20,Conceptual,Diseño flujo automatización Bizagi,1..19,Procesos/Int.Op/Ev.Op,6,2026-06-25,2026-08-05,SI
+14,Integraciones,Diseñar integraciones,11;12;13,Tecnología,2,2026-06-18,2026-07-01,NO
+9,Formularios,Mockup diseño transversal,8,Evol. Operacional,4,2026-07-02,2026-07-29,NO
+15,Integraciones,Desarrollar integraciones,14,Tecnología,4,2026-07-02,2026-07-29,NO
+43,Roles,Solicitar accesos,40;41;42,Tecnología,4,2026-07-02,2026-07-29,NO
+22,Reglas Proceso,Entendimiento reglas actuales,20,Int. Operacional,1,2026-08-06,2026-08-12,SI
+21,Conceptual,Implementación flujo funcional,20,Procesos/Tecno,6,2026-08-06,2026-09-16,SI
+23,Reglas Proceso,Estructurar,22,Int. Operacional,1,2026-08-13,2026-08-19,SI
+24,Reglas Proceso,Definir reglas,22;23,Int. Operacional,1,2026-08-20,2026-08-26,SI
+27,Reglas Proceso,Implementar reglas Bizagi,25;26;24,Procesos/Int.Op,2,2026-08-27,2026-09-09,SI
+28,Reglas Asignación,Entendimiento,20,Int. Operacional,1,2026-08-06,2026-08-12,NO
+10,Formularios,Experiencia funcional Bizagi (IA),6;7;8;9,Evol. Operacional,3,2026-07-30,2026-08-19,NO
+16,Integraciones,Implementar integraciones,15,Tecnología,4,2026-07-30,2026-08-26,NO
+29,Reglas Asignación,Estructurar,22..27,Int. Operacional,1,2026-09-10,2026-09-16,SI
+30,Reglas Asignación,Definir reglas,28;29,Int. Operacional,1,2026-09-17,2026-09-23,NO
+32,Reglas Asignación,Parametrizar en Bizagi,28..31,Int. Operacional,1,2026-09-24,2026-09-30,NO
+33,Reglas Asignación,Implementar en Bizagi,32,Int. Operacional,1,2026-10-01,2026-10-07,NO
+5,Datos,Consolidación modelo final,61;2;3;4,Int. Operacional,4,2026-07-02,2026-07-29,NO
+38,Reglas Motor,Conexión motor decisión a Bizagi,34..37,Int. Operacional,1,2026-06-11,2026-06-17,NO
+39,Reglas Motor,Implementar reglas motor en Bizagi,38,Int. Operacional,2,2026-06-18,2026-07-01,NO
+44,Roles,Certificación pruebas,,Mesa Trabajo,6,2026-09-17,2026-10-28,NO
+45,Comunicaciones,Plan comunicación,,Mesa Trabajo,2,2026-09-01,2026-09-14,NO
+46,Comunicaciones,Estrategia gestión cambio,,Mesa Trabajo,2,2026-09-15,2026-09-28,NO

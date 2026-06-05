@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reglas de Negocio — Filenet Suscripción y Emisión</title>
+<style>
+:root{--bg:#0f172a;--surface:#1e293b;--card:#334155;--accent:#38bdf8;
+--accent2:#a78bfa;--accent3:#34d399;--accent4:#fb923c;--text:#e2e8f0;
+--muted:#94a3b8;--border:#475569;--success:#22c55e;--warn:#eab308;--danger:#ef4444}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:2rem}
+.container{max-width:1200px;margin:0 auto}
+h1{font-size:1.8rem;color:var(--accent);margin-bottom:.5rem}
+h2{font-size:1.4rem;color:var(--accent2);margin:2rem 0 .8rem;border-bottom:2px solid var(--border);padding-bottom:.4rem}
+h3{font-size:1.05rem;color:var(--accent3);margin:1.2rem 0 .4rem}
+table{width:100%;border-collapse:collapse;margin:.8rem 0;font-size:0.84rem}
+th{padding:6px 8px;text-align:left;background:var(--card);color:var(--accent)}
+td{padding:5px 8px;border-bottom:1px solid var(--border)}
+.card{background:var(--surface);padding:1rem;border-radius:8px;margin:.8rem 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;margin:1rem 0}
+code{background:var(--card);padding:2px 6px;border-radius:4px;font-size:0.85rem}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>📋 Reglas de Negocio — Filenet</h1>
+<p style="color:var(--muted)">Flujo de Suscripción y Emisión | Seguros Bolívar | Jun 2026 | v1.0</p>
+<p style="color:var(--muted)">Documento de referencia para migración a Bizagi</p>
+
+<nav style="background:var(--surface);padding:.8rem;border-radius:8px;margin:1.5rem 0;font-size:0.9rem">
+<a href="#flujos" style="color:var(--accent3);margin:0 .5rem">Flujos</a>
+<a href="#escritorios" style="color:var(--accent3);margin:0 .5rem">Escritorios</a>
+<a href="#transiciones" style="color:var(--accent3);margin:0 .5rem">Transiciones</a>
+<a href="#reglas" style="color:var(--accent3);margin:0 .5rem">Reglas</a>
+<a href="#campos" style="color:var(--accent3);margin:0 .5rem">Campos</a>
+<a href="#estados" style="color:var(--accent3);margin:0 .5rem">Estados</a>
+<a href="#devoluciones" style="color:var(--accent3);margin:0 .5rem">Devoluciones</a>
+<a href="#ciclovida" style="color:var(--accent3);margin:0 .5rem">Ciclo Vida</a>
+</nav>
+
+<!-- FLUJOS -->
+<section id="flujos">
+<h2>1. Flujos de Trabajo</h2>
+<div class="grid">
+<div class="card" style="border-left:4px solid var(--accent)">
+<h3>Flujo 1: Principal</h3>
+<ul><li>Solicitudes generales de seguros</li><li><strong>11 escritorios</strong></li><li>Todos los ramos: Vida, Salud, Autos, Capitalización, SOAT, RC</li></ul>
+</div>
+<div class="card" style="border-left:4px solid var(--accent2)">
+<h3>Flujo 2: Confidencial</h3>
+<ul><li>Información sensible/reservada</li><li><strong>5 escritorios</strong></li><li>Acceso restringido</li></ul>
+</div>
+<div class="card" style="border-left:4px solid var(--accent3)">
+<h3>Flujo 3: Conocimiento Terceros</h3>
+<ul><li>Cumplimiento normativo AML/SARLAFT</li><li><strong>2 escritorios</strong></li><li>Flujo independiente y lineal</li></ul>
+</div>
+</div>
+</section>
+
+<!-- ESCRITORIOS -->
+<section id="escritorios">
+<h2>2. Escritorios y Funciones</h2>
+<h3>Flujo Principal (11 escritorios)</h3>
+<table>
+<thead><tr><th>Escritorio</th><th>Función</th><th>Botones (destinos)</th></tr></thead>
+<tbody>
+<tr><td><strong>Análisis de Riesgo</strong></td><td>Evaluar riesgo de la solicitud</td><td>Completar | Líder Operaciones | Jefes Técnico | Gerencia Médica | Salud Internacional</td></tr>
+<tr><td><strong>Asistentes Servicio (CAV)</strong></td><td>Validar info básica</td><td>Complete (única)</td></tr>
+<tr><td><strong>Jefes Técnicos</strong></td><td>Aprobación técnica nivel superior</td><td>Completar | Líder Operaciones | Análisis Riesgo | Gerencia Médica</td></tr>
+<tr><td><strong>Líderes Operaciones</strong></td><td>Gestión operativa (emisión)</td><td>Completar | Jefes Técnicos | Análisis Riesgo | Gerencia Médica | Salud Internacional</td></tr>
+<tr><td><strong>Gerencia Médica</strong></td><td>Evaluación médica (salud/vida)</td><td>Completar | Líder Operaciones | Análisis Riesgo | Salud Internacional</td></tr>
+<tr><td><strong>Outsourcing</strong></td><td>Gestión por terceros externos</td><td>Complete (única)</td></tr>
+<tr><td><strong>Salud Internacional</strong></td><td>Productos cobertura internacional</td><td>Gerencia Médica | Análisis Riesgo | Análisis Corredores | Líder Operaciones</td></tr>
+<tr><td><strong>Gestión Documental</strong></td><td>Verificar documentación completa</td><td>Completar (única)</td></tr>
+<tr><td><strong>Conocimiento Emisión</strong></td><td>Verificar AML/SARLAFT para emisión</td><td>Completar (única)</td></tr>
+<tr><td><strong>Análisis Corredores</strong></td><td>Solicitudes canal corredores</td><td>Completar | Líder Operaciones | Análisis Riesgo | Jefes Técnico | Gerencia Médica | Salud Internacional</td></tr>
+<tr><td><strong>Análisis Motor</strong></td><td>Análisis especializado (8 destinos)</td><td>Completar | Líder Operaciones | Jefes Técnico | Gerencia Médica | Salud Internacional | Análisis Riesgo | Análisis Corredores | Análisis Confidencial</td></tr>
+</tbody>
+</table>
+
+<h3>Flujo Confidencial (5 escritorios)</h3>
+<table>
+<thead><tr><th>Escritorio</th><th>Botones</th></tr></thead>
+<tbody>
+<tr><td>Análisis Riesgo (Confidencial)</td><td>Completar | Líder Operaciones | Análisis Corredores | Jefes Técnico | Gerencia Médica | Salud Internacional</td></tr>
+<tr><td>Jefes Técnicos (Confidencial)</td><td>Completar | Líder Operaciones | Análisis Corredores | Análisis Riesgo | Gerencia Médica</td></tr>
+<tr><td>Líderes Operaciones (Confidencial)</td><td>Completar | Jefes Técnicos | Análisis Corredores | Análisis Riesgo | Gerencia Médica | Salud Internacional</td></tr>
+<tr><td>Asistentes Servicio (Confidencial)</td><td>Complete (única)</td></tr>
+<tr><td>Outsourcing (Confidencial)</td><td>Complete (única)</td></tr>
+</tbody>
+</table>
+
+<h3>Flujo Conocimiento Terceros (2 escritorios)</h3>
+<table>
+<thead><tr><th>Escritorio</th><th>Botones</th></tr></thead>
+<tbody>
+<tr><td>Conocimiento Terceros</td><td>Completar → pasa a Radicador</td></tr>
+<tr><td>Radicador Terceros</td><td>Completar → caso finaliza</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- TRANSICIONES -->
+<section id="transiciones">
+<h2>3. Tabla de Transiciones</h2>
+<p>Mapa completo: desde qué escritorio puede ir a cuál otro.</p>
+<table>
+<thead><tr><th>Desde</th><th>Puede ir a</th></tr></thead>
+<tbody>
+<tr><td>Análisis de Riesgo</td><td>Completar | Líder Operaciones | Jefes Técnico | Gerencia Médica | Salud Internacional</td></tr>
+<tr><td>Asistentes Servicio</td><td>Completar (única)</td></tr>
+<tr><td>Jefes Técnicos</td><td>Completar | Líder Operaciones | Análisis Riesgo | Gerencia Médica</td></tr>
+<tr><td>Líderes Operaciones</td><td>Completar | Jefes Técnicos | Análisis Riesgo | Gerencia Médica | Salud Internacional</td></tr>
+<tr><td>Gerencia Médica</td><td>Completar | Líder Operaciones | Análisis Riesgo | Salud Internacional</td></tr>
+<tr><td>Outsourcing</td><td>Completar (única)</td></tr>
+<tr><td>Salud Internacional</td><td>Gerencia Médica | Análisis Riesgo | Análisis Corredores | Líder Operaciones</td></tr>
+<tr><td>Gestión Documental</td><td>Completar (única)</td></tr>
+<tr><td>Conocimiento Emisión</td><td>Completar (única)</td></tr>
+<tr><td>Análisis Corredores</td><td>Completar | Líder Operaciones | Análisis Riesgo | Jefes Técnico | Gerencia Médica | Salud Internacional</td></tr>
+<tr><td>Análisis Motor</td><td>Completar | Líder Operaciones | Jefes Técnico | Gerencia Médica | Salud Internacional | Análisis Riesgo | Análisis Corredores | Análisis Confidencial</td></tr>
+</tbody>
+</table>
+<p style="color:var(--muted);font-size:0.85rem;margin-top:0.5rem"><strong>Regla clave:</strong> El botón que presiona el usuario determina el destino. No hay lógica automática — es decisión humana.</p>
+</section>
+
+<!-- REGLAS -->
+<section id="reglas">
+<h2>4. Reglas de Negocio</h2>
+
+<h3>4.1 Tipos de Movimiento de Negocio</h3>
+<table>
+<thead><tr><th>Código</th><th>Descripción</th><th>Ejemplo</th></tr></thead>
+<tbody>
+<tr><td>MN01</td><td>Cotización / Negocio nuevo</td><td>Cliente solicita cotización</td></tr>
+<tr><td>MN02</td><td>Nuevo negocio</td><td>Emisión póliza nueva</td></tr>
+<tr><td>MN03</td><td>Renovación</td><td>Renovación póliza existente</td></tr>
+<tr><td>MN04</td><td>Modificación de póliza</td><td>Cambio beneficiarios, coberturas</td></tr>
+<tr><td>MN06</td><td>Cancelación</td><td>Cancelación de póliza</td></tr>
+<tr><td>MN12</td><td>Error en títulos (Capitalización)</td><td>Corrección errores títulos</td></tr>
+<tr><td>MN13</td><td>Servicios de capitalización</td><td>Servicios técnicos títulos</td></tr>
+</tbody>
+</table>
+
+<h3>4.2 Campos condicionales por Tipo Movimiento</h3>
+<div class="card">
+<p><strong>Si MN04 (Modificación):</strong> Aparece campo "Tipo de Modificación" (obligatorio)</p>
+<p><strong>Si MN12 (Error Títulos):</strong> Aparece campo con 10 opciones de corrección</p>
+<p><strong>Si MN13 (Servicios Capitalización):</strong> Aparece "Tipo de Servicio" → si Servicios técnicos: 18 opciones (SC01-SC18)</p>
+</div>
+
+<h3>4.3 Conocimiento del Cliente (ContinuarProceso)</h3>
+<div class="card">
+<p>El sistema consulta automáticamente el <strong>Servicio de Marcas</strong> para verificar AML/SARLAFT.</p>
+<p>Campo <code>ContinuarProceso</code> tiene 2 posiciones:</p>
+<ul>
+<li>Pos 1: Tomador requiere análisis (S/N)</li>
+<li>Pos 2: Asegurado requiere análisis (S/N)</li>
+</ul>
+<p><strong>Efecto:</strong> Si = "S" → se oculta campo "Actualizar Estado" en escritorios: Análisis Riesgo, CAV, Conocimiento, Análisis Seguro</p>
+<p><strong>Regla especial:</strong> Si Tomador = Asegurado o Ramo 801 (Capitalización) → mismo resultado para ambos</p>
+</div>
+
+<h3>4.4 Exceptuado y Excepciones</h3>
+<div class="grid">
+<div class="card">
+<h3 style="color:var(--accent4)">Exceptuado</h3>
+<p><code>S</code> = Puede saltar pasos de análisis<br><code>N</code> = Flujo normal completo</p>
+</div>
+<div class="card">
+<h3 style="color:var(--accent4)">Excepción de Negocio</h3>
+<p><code>true</code> = Excepción aprobada nivel superior<br><code>false</code> = Flujo estándar</p>
+</div>
+<div class="card">
+<h3 style="color:var(--accent4)">Tipo Excepción (solo Autos)</h3>
+<ul style="font-size:0.85rem">
+<li>ATC — Convertibles</li>
+<li>ACB — Blindados</li>
+<li>ACP — Placa pública uso particular</li>
+<li>APF — Modelo &gt;15 años</li>
+<li>MFP — Marcas fuera de políticas</li>
+<li>MNJ — Motocicletas</li>
+<li>TSP — Taxis servicio público</li>
+<li>VPE — Vehículos pesados/carga</li>
+<li>VSV — Supera valor asegurado</li>
+</ul>
+</div>
+</div>
+
+<h3>4.5 Tomador = Asegurado</h3>
+<div class="card">
+<p><code>TomadorAsegurado = "SI"</code> → Solo info tomador<br>
+<code>TomadorAsegurado = "NO"</code> → Campos adicionales asegurado (tipo doc, número, nombres, apellidos)</p>
+</div>
+</section>
+
+<!-- CAMPOS -->
+<section id="campos">
+<h2>5. Campos por Escritorio</h2>
+
+<h3>5.1 Obligatorios en TODOS los escritorios</h3>
+<table>
+<thead><tr><th>Campo</th><th>Editable</th><th>Nota</th></tr></thead>
+<tbody>
+<tr><td>Número de caso</td><td>No</td><td>ID único</td></tr>
+<tr><td>Fecha de creación</td><td>No</td><td>Automática</td></tr>
+<tr><td>Ramo / Producto / Subproducto</td><td>No</td><td>Fijo al crear</td></tr>
+<tr><td>Tipo Movimiento Negocio</td><td>No</td><td>MN01-MN13</td></tr>
+<tr><td>Tipo Actuación</td><td>Sí</td><td>—</td></tr>
+<tr><td>Estado del Negocio</td><td>Sí</td><td>Obligatorio actualizar</td></tr>
+<tr><td>Fecha FATCA</td><td>Sí</td><td>Revisión fiscal</td></tr>
+<tr><td>Número Solicitudes</td><td>Sí</td><td>—</td></tr>
+<tr><td>Outsourcing (SI/NO)</td><td>Sí</td><td>¿Va a tercero?</td></tr>
+<tr><td>Cod Fasecolda (SI/NO)</td><td>Sí</td><td>—</td></tr>
+<tr><td>Comentario</td><td>Sí</td><td>Máx 512 caracteres</td></tr>
+</tbody>
+</table>
+
+<h3>5.2 Campos cliente (solo lectura)</h3>
+<table>
+<thead><tr><th>Campo</th><th>Editable</th></tr></thead>
+<tbody>
+<tr><td>Tipo/Número Documento</td><td>No</td></tr>
+<tr><td>Nombres / Apellidos</td><td>No</td></tr>
+<tr><td>Clave Asesor (5 dígitos)</td><td>No</td></tr>
+<tr><td>Número Póliza (max 13 dígitos)</td><td>Sí</td></tr>
+<tr><td>Localidad Radicación</td><td>Sí</td></tr>
+<tr><td>Director Comercial</td><td>Sí</td></tr>
+</tbody>
+</table>
+
+<h3>5.3 Campos adicionales</h3>
+<table>
+<thead><tr><th>Campo</th><th>Cuándo</th></tr></thead>
+<tbody>
+<tr><td>Causa Devolución</td><td>Cuando EstadoNeg = Devuelto</td></tr>
+<tr><td>Placa (max 6 chars)</td><td>Ramo Automóviles</td></tr>
+<tr><td>Número Título / Dígito Control</td><td>Ramo Capitalización</td></tr>
+<tr><td>Consecutivo Anterior</td><td>Cuando existe relación</td></tr>
+<tr><td>Caso Externo</td><td>Todos (no editable post-creación)</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- ESTADOS -->
+<section id="estados">
+<h2>6. Estados del Negocio</h2>
+<table>
+<thead><tr><th>Estado</th><th>Significado</th><th>Quién lo cambia</th></tr></thead>
+<tbody>
+<tr><td style="color:var(--warn)"><strong>Pendiente</strong></td><td>En proceso de revisión</td><td>Sistema (al crear)</td></tr>
+<tr><td style="color:var(--accent)"><strong>En estudio</strong></td><td>Análisis en detalle</td><td>Usuario</td></tr>
+<tr><td style="color:var(--accent4)"><strong>Devuelto</strong></td><td>Falta información</td><td>Usuario</td></tr>
+<tr><td style="color:var(--success)"><strong>Expedido</strong></td><td>Póliza emitida</td><td>Usuario (al completar)</td></tr>
+<tr><td style="color:var(--danger)"><strong>Eliminado</strong></td><td>Cancelada/rechazada</td><td>Usuario</td></tr>
+<tr><td style="color:var(--muted)">ExpedidoDigi</td><td>Error digitación (solo Capitalización)</td><td>Usuario</td></tr>
+<tr><td style="color:var(--muted)">ExpedidoFecha</td><td>Cambio fecha (solo Capitalización)</td><td>Usuario</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- DEVOLUCIONES -->
+<section id="devoluciones">
+<h2>7. Causas de Devolución (Capitalización)</h2>
+<table>
+<thead><tr><th>Cód</th><th>Descripción</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Ajustar en el sistema cantidad de títulos</td></tr>
+<tr><td>2</td><td>Cliente consultable</td></tr>
+<tr><td>3</td><td>Consecutivo debe ser direccionado al analista de emisión</td></tr>
+<tr><td>4</td><td>Devuelto por solicitud de la localidad</td></tr>
+<tr><td>5</td><td>Error en autorización de descuento</td></tr>
+<tr><td>6</td><td>Error en clave agente</td></tr>
+<tr><td>7</td><td>Error en localidad de radicación</td></tr>
+<tr><td>8</td><td>Error en segundo suscriptor</td></tr>
+<tr><td>9</td><td>Falta diligenciar campo cantidad títulos</td></tr>
+<tr><td>10</td><td>Fecha de venta</td></tr>
+<tr><td>11</td><td>Fecha emisión anterior a la fecha actual</td></tr>
+<tr><td>12</td><td>Imagen ilegible y/o enmendada</td></tr>
+<tr><td>13</td><td>Imagen no corresponde al título del formulario electrónico</td></tr>
+<tr><td>14</td><td>Inconsistencia en forma contractual</td></tr>
+<tr><td>15</td><td>Inconsistencia en opción de ahorro</td></tr>
+<tr><td>16</td><td>No existe recaudo o autorización de descuento</td></tr>
+<tr><td>17</td><td>Título de persona jurídica con segundo propietario</td></tr>
+<tr><td>18</td><td>Título sin firma de propietario</td></tr>
+<tr><td>19</td><td>Valor cuota errado</td></tr>
+</tbody>
+</table>
+
+<h3>Causas de Eliminación (Capitalización)</h3>
+<table>
+<thead><tr><th>Cód</th><th>Descripción</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Desistimiento del cliente</td></tr>
+<tr><td>2</td><td>Devolución conocimiento del cliente</td></tr>
+<tr><td>3</td><td>Devolución Técnica</td></tr>
+<tr><td>4</td><td>Expiró por tiempo</td></tr>
+<tr><td>5</td><td>Título enmendado</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- CICLO DE VIDA -->
+<section id="ciclovida">
+<h2>8. Ciclo de Vida del Caso</h2>
+
+<h3>8.1 Cómo se crea un caso</h3>
+<div class="card">
+<p><strong>Un sistema externo</strong> (Portal Intermediarios, Simón Servicio, Gestor Correos) envía a Filenet:</p>
+<table>
+<thead><tr><th>Dato requerido</th><th>Ejemplo</th></tr></thead>
+<tbody>
+<tr><td>Nombre del flujo</td><td>Suscripción y Emisión</td></tr>
+<tr><td>Ramo / Producto / Subproducto</td><td>Vida / Individual / Pesos</td></tr>
+<tr><td>Tipo Movimiento Negocio</td><td>MN02 (Nuevo negocio)</td></tr>
+<tr><td>Datos tomador</td><td>Tipo doc, número, nombres, apellidos</td></tr>
+<tr><td>Datos asegurado (si difiere)</td><td>Tipo doc, número, nombres, apellidos</td></tr>
+<tr><td>Clave asesor comercial</td><td>5 dígitos (10000-99999)</td></tr>
+<tr><td>Localidad radicación</td><td>Bogotá</td></tr>
+<tr><td>Director comercial</td><td>—</td></tr>
+<tr><td>Documentos adjuntos</td><td>PDFs, imágenes</td></tr>
+<tr><td>Observaciones iniciales</td><td>Máx 512 caracteres</td></tr>
+</tbody>
+</table>
+<h3 style="color:var(--accent4)">Al crearse automáticamente:</h3>
+<ol style="padding-left:1.5rem">
+<li>Se asigna <strong>consecutivo único</strong> (ej: 214527)</li>
+<li>Se establece fecha/hora de creación</li>
+<li>Se registra sistema de origen</li>
+<li>Se consulta <strong>Servicio de Marcas</strong> (conocimiento cliente)</li>
+<li>Caso llega al primer escritorio (<strong>Análisis de Riesgo</strong>)</li>
+<li>Estado se establece como <strong>"Pendiente"</strong></li>
+</ol>
+</div>
+
+<h3>8.2 Cómo se gestiona un caso en un escritorio</h3>
+<div class="card">
+<table>
+<thead><tr><th>Paso</th><th>Acción</th><th>Detalle</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><strong>Abrir caso</strong></td><td>Click "Open" desde bandeja de trabajo</td></tr>
+<tr><td>2</td><td><strong>Revisar información</strong></td><td>Datos caso: ramo, producto, movimiento, cliente</td></tr>
+<tr><td>3</td><td><strong>Revisar documentos</strong></td><td>Pestaña "Attachments" → PDFs adjuntos</td></tr>
+<tr><td>4</td><td><strong>Consultar historial</strong></td><td>Pestaña "History" → acciones previas, quién, cuándo</td></tr>
+<tr><td>5</td><td><strong>Completar campos</strong></td><td>Actualizar Estado Negocio + campos obligatorios</td></tr>
+<tr><td>6</td><td><strong>Escribir comentario</strong></td><td>Observación explicando decisión (máx 512 chars)</td></tr>
+<tr><td>7</td><td><strong>Despachar</strong></td><td>Presionar botón según decisión → caso va al destino</td></tr>
+</tbody>
+</table>
+<p style="color:var(--muted);margin-top:0.5rem"><strong>Alternativas:</strong> "Save" = guardar sin despachar | "Cancel" = cerrar sin guardar</p>
+</div>
+
+<h3>8.3 Qué pasa al presionar "Completar"</h3>
+<div class="grid">
+<div class="card" style="border-left:4px solid var(--accent)">
+<h3 style="color:var(--accent)">Escritorios de decisión</h3>
+<p>(Análisis Riesgo, Jefes Técnicos, Líderes Operaciones, etc.)</p>
+<ul>
+<li>"Completar" = gestión en ese escritorio terminó exitosamente</li>
+<li>Motor Filenet decide automáticamente el siguiente paso</li>
+<li>Caso puede ir a otro escritorio o finalizarse</li>
+</ul>
+</div>
+<div class="card" style="border-left:4px solid var(--accent3)">
+<h3 style="color:var(--accent3)">Escritorios paso único</h3>
+<p>(CAV, Outsourcing, Gestión Documental, Conocimiento)</p>
+<ul>
+<li>"Complete" es la única opción</li>
+<li>Caso siempre avanza al siguiente paso definido</li>
+<li>Usuario no controla destino</li>
+</ul>
+</div>
+<div class="card" style="border-left:4px solid var(--success)">
+<h3 style="color:var(--success)">Cuando el caso termina</h3>
+<ul>
+<li>Se retira del flujo de trabajo</li>
+<li>No aparece en ninguna bandeja</li>
+<li>Queda en historial con estado final (Expedido/Eliminado)</li>
+<li>Documentos permanecen en repositorio</li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- NOTAS -->
+<section>
+<h2>9. Notas Importantes</h2>
+<div class="card" style="border-left:4px solid var(--warn)">
+<ol style="padding-left:1.2rem;font-size:0.9rem">
+<li>Comentario obligatorio en todos los escritorios (máx 512 chars)</li>
+<li>Campos cliente (nombres, doc) = solo lectura</li>
+<li>Ramo/Producto/Subproducto = solo lectura post-creación</li>
+<li>EstadoNeg = obligatorio y editable (usuario debe actualizarlo)</li>
+<li>Outsourcing (SI/NO) = obligatorio</li>
+<li>Devolución requiere Causa de Devolución</li>
+<li>Número póliza máx 13 dígitos</li>
+<li>Clave asesor = 5 dígitos (10000-99999)</li>
+<li><strong>El botón determina el destino — NO hay lógica automática</strong></li>
+<li>Escritorios paso único (CAV, Outsourcing, Gestión, Conocimiento) solo pueden completar</li>
+<li>Flujo Confidencial = mismos campos y reglas, solo acceso restringido</li>
+<li>Caso Externo no se puede modificar post-creación</li>
+<li>Servicio de Marcas se consulta automáticamente al abrir caso</li>
+<li>Si ContinuarProceso = "S" → campo "Actualizar Estado" se oculta</li>
+</ol>
+</div>
+</section>
+
+<footer style="margin-top:2rem;padding:1rem;background:var(--surface);border-radius:8px;text-align:center">
+<p style="color:var(--muted);font-size:0.85rem">
+Documento de Reglas de Negocio — Filenet — Seguros Bolívar — Jun 2026 v1.0<br>
+Elaborado por equipo de desarrollo. Referencia para migración a Bizagi.
+</p>
+</footer>
+</div>
+</body>
+</html>

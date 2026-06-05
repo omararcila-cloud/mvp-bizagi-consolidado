@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flujo de Consecutivos - FileNet | Seguros Bolívar</title>
+    <style>
+        :root {
+            --primary: #1a3a5c;
+            --secondary: #2e86ab;
+            --accent: #f18f01;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #e53935;
+            --light: #f5f7fa;
+            --dark: #2c3e50;
+            --gray: #7f8c8d;
+            --border: #dfe6e9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 25px 0;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        .section h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h3 {
+            color: var(--secondary);
+            margin: 20px 0 12px 0;
+            font-size: 1.2rem;
+        }
+
+        /* Flow diagram styles */
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 0;
+        }
+
+        .flow-step {
+            background: white;
+            border: 2px solid var(--secondary);
+            border-radius: 12px;
+            padding: 20px 30px;
+            margin: 8px 0;
+            min-width: 320px;
+            text-align: center;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .flow-step:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(46, 134, 171, 0.2);
+        }
+
+        .flow-step.inicio {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .flow-step.decision {
+            background: #fff3e0;
+            border-color: var(--accent);
+            border-radius: 12px;
+            transform: rotate(0deg);
+        }
+
+        .flow-step.escritorio {
+            background: #e8f5e9;
+            border-color: var(--success);
+        }
+
+        .flow-arrow {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin: 5px 0;
+        }
+
+        /* Escritorio cards */
+        .escritorios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .escritorio-card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .escritorio-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .escritorio-card h4 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .escritorio-card p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .escritorio-card.cc { border-left-color: #9c27b0; }
+        .escritorio-card.ar { border-left-color: #e53935; }
+        .escritorio-card.out { border-left-color: #ff9800; }
+        .escritorio-card.lid { border-left-color: #2196f3; }
+        .escritorio-card.gest { border-left-color: #00bcd4; }
+        .escritorio-card.rec { border-left-color: #4caf50; }
+        .escritorio-card.term { border-left-color: #607d8b; }
+        .escritorio-card.corr { border-left-color: #795548; }
+
+        /* Rules table */
+        .rules-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+
+        .rules-table th {
+            background: var(--primary);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .rules-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .rules-table tr:hover {
+            background: #f0f7ff;
+        }
+
+        .rules-table tr:nth-child(even) {
+            background: #fafbfc;
+        }
+
+        .rules-table tr:nth-child(even):hover {
+            background: #f0f7ff;
+        }
+
+        /* Badge styles */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-cc { background: #f3e5f5; color: #7b1fa2; }
+        .badge-ar { background: #ffebee; color: #c62828; }
+        .badge-out { background: #fff3e0; color: #e65100; }
+        .badge-lid { background: #e3f2fd; color: #1565c0; }
+        .badge-gest { background: #e0f7fa; color: #00838f; }
+        .badge-rec { background: #e8f5e9; color: #2e7d32; }
+        .badge-corr { background: #efebe9; color: #4e342e; }
+
+        /* Info box */
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid var(--secondary);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+
+        .info-box.warning {
+            background: #fff8e1;
+            border-left-color: var(--warning);
+        }
+
+        .info-box strong {
+            color: var(--primary);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--secondary);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 70px;
+            margin-bottom: 25px;
+        }
+
+        .timeline-item::before {
+            content: attr(data-step);
+            position: absolute;
+            left: 15px;
+            width: 32px;
+            height: 32px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .timeline-item h4 {
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .timeline-item p {
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        /* Diagram styles */
+        .diagram-box {
+            background: #f8f9fa;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .branches {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .branch {
+            flex: 1;
+            min-width: 250px;
+            max-width: 400px;
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .branch h4 {
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+
+        .branch-item {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin: 6px 0;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.6rem; }
+            .escritorios-grid { grid-template-columns: 1fr; }
+            .branches { flex-direction: column; align-items: center; }
+            .section { padding: 20px; }
+        }
+
+        /* Print styles */
+        @media print {
+            .header { padding: 20px; }
+            .section { box-shadow: none; border: 1px solid #ddd; }
+            .flow-step:hover { transform: none; }
+        }
+
+        .toc {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px 30px;
+            margin: 20px 0;
+        }
+
+        .toc h3 {
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        .toc ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .toc li {
+            padding: 6px 0;
+        }
+
+        .toc a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .separator {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--secondary), transparent);
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>📋 Flujo de Consecutivos — FileNet</h1>
+    <p>Reglas de enrutamiento de casos a escritorios de trabajo</p>
+    <p style="opacity:0.7; font-size:0.9rem; margin-top:8px;">Seguros Bolívar — Gestión Documental BPM</p>
+</div>
+
+<div class="container">
+
+    <!-- Tabla de contenidos -->
+    <div class="toc">
+        <h3>📑 Contenido</h3>
+        <ul>
+            <li><a href="#resumen">1. Resumen Ejecutivo</a></li>
+            <li><a href="#donde-reglas">2. ¿Dónde Están las Reglas de Negocio?</a></li>
+            <li><a href="#escritorios">3. Escritorios (Bandejas de Trabajo)</a></li>
+            <li><a href="#flujo-general">4. Flujo General del Proceso</a></li>
+            <li><a href="#reglas">5. Reglas de Enrutamiento</a></li>
+            <li><a href="#movimientos">6. Tipos de Movimiento de Negocio</a></li>
+            <li><a href="#sarlaft">7. Reglas de Conocimiento del Cliente (Sarlaft)</a></li>
+            <li><a href="#outsourcing">8. Reglas de Outsourcing</a></li>
+            <li><a href="#estados">9. Estados del Consecutivo</a></li>
+            <li><a href="#dos-flujos">10. Dos Flujos de Trabajo</a></li>
+            <li><a href="#trazabilidad">11. Trazabilidad y Consulta</a></li>
+            <li><a href="#servicios">12. Servicios API — Integración</a></li>
+        </ul>
+    </div>
+
+    <!-- 1. Resumen Ejecutivo -->
+    <div class="section" id="resumen">
+        <h2>📌 1. Resumen Ejecutivo</h2>
+        <p>Cuando se crea un <strong>consecutivo</strong> (caso) en FileNet, el sistema evalúa automáticamente un conjunto de reglas de negocio para determinar:</p>
+        <ul style="margin: 15px 0 15px 25px;">
+            <li><strong>¿A qué escritorio (bandeja de trabajo) se envía el caso?</strong></li>
+            <li><strong>¿En qué estado queda el caso?</strong></li>
+        </ul>
+        <p>Esta evaluación se basa en las características del caso: ramo, producto, tipo de movimiento, información financiera del cliente (Sarlaft), y reglas específicas configuradas en el sistema.</p>
+
+        <div class="info-box" style="margin-top:20px;">
+            <strong>💡 Concepto clave:</strong> Cada vez que un caso cambia de estado o se mueve entre escritorios, se registra un nuevo registro en el historial. El estado actual del caso siempre corresponde al <strong>último registro</strong> (el más reciente).
+        </div>
+    </div>
+
+    <!-- 2. Donde están las reglas -->
+    <div class="section" id="donde-reglas">
+        <h2>🗂️ 2. ¿Dónde Están las Reglas de Negocio?</h2>
+        <p>Las reglas de enrutamiento se encuentran en <strong>dos lugares distintos</strong>. Esto es importante para saber quién puede modificarlas y cómo:</p>
+
+        <h3>📊 A) Reglas en TABLAS de la Base de Datos (Configurables sin desarrollo)</h3>
+        <p>Estas reglas se pueden modificar actualizando datos en tablas. No requieren cambio de código:</p>
+
+        <table class="rules-table">
+            <thead>
+                <tr>
+                    <th>Tabla</th>
+                    <th>¿Qué regla controla?</th>
+                    <th>Campo clave</th>
+                    <th>Ejemplo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>FN_SE_MOVIMIENTO_NEGOCIO</strong></td>
+                    <td>Si un tipo de movimiento requiere pasar por Conocimiento del Cliente</td>
+                    <td><code>r_conocimiento</code> (S/N)</td>
+                    <td>MN02 (Nuevo Negocio) con r_conocimiento = 'S' → sí evalúa CC</td>
+                </tr>
+                <tr>
+                    <td><strong>FN_SE_TIPO_MODIFICACION</strong></td>
+                    <td>Si un subtipo de modificación (MN04) incluye validación de Conocimiento del Cliente</td>
+                    <td><code>INCLUYE_CC</code> (S/N)</td>
+                    <td>Subtipo "Datos Generales" con INCLUYE_CC = 'N' → no pasa por CC</td>
+                </tr>
+                <tr>
+                    <td><strong>FN_SE_RAMO</strong></td>
+                    <td>Si un ramo requiere conocimiento del cliente</td>
+                    <td><code>r_conocimiento</code> (S/N)</td>
+                    <td>Ramo 1 (Automóviles) con r_conocimiento = 'S' → evalúa producto</td>
+                </tr>
+                <tr>
+                    <td><strong>FN_SE_PRODUCTO</strong></td>
+                    <td>Si un producto requiere conocimiento del cliente</td>
+                    <td><code>r_conocimiento</code> (S/N)</td>
+                    <td>Producto 250 con r_conocimiento = 'S' → evalúa subproducto</td>
+                </tr>
+                <tr>
+                    <td><strong>FN_SE_SUBPRODUCTO</strong> (vía FN_SE_NEGRODUCTO)</td>
+                    <td>Si un subproducto requiere conocimiento del cliente</td>
+                    <td><code>r_conocimiento</code> (S/N)</td>
+                    <td>Subproducto 274 con r_conocimiento = 'N' → no pasa por CC</td>
+                </tr>
+                <tr>
+                    <td><strong>FN_SE_REGLAS_NEGOCIO</strong> (id_regla = 1)</td>
+                    <td>Valores umbral para decidir cuándo aplica CC por estado financiero/exceptuado</td>
+                    <td><code>estadofinanciero</code>, <code>exceptuado</code>, <code>asegestadofinanciero</code>, <code>asegexceptuado</code>, <code>excepcionneg</code></td>
+                    <td>Define los valores que se comparan contra el tomador/asegurado del caso</td>
+                </tr>
+                <tr>
+                    <td><strong>FN_SE_TIPO_CONTROL_DOCUMENTAL</strong></td>
+                    <td>Qué escritorio y estado se asigna según el tipo de control documental</td>
+                    <td><code>cod_escritorio</code>, <code>cod_estado_negocio</code></td>
+                    <td>Control "Expedido sin revisión" → escritorio Expedidos + estado Expedido</td>
+                </tr>
+                <tr>
+                    <td><strong>FN_SE_ESCRITORIOS</strong></td>
+                    <td>Catálogo de escritorios disponibles con alias visible</td>
+                    <td><code>SYMBOLIC</code>, <code>ALIAS</code>, <code>NOMBRE_ESCRITORIO</code></td>
+                    <td>"Conocimiento" → Alias "CONOCIMIENTO CLIENTE"</td>
+                </tr>
+                <tr>
+                    <td><strong>FN_SE_ESTADO_NEGOCIO</strong></td>
+                    <td>Catálogo de estados posibles</td>
+                    <td><code>nombre_simbolico</code>, <code>nombre_visual</code></td>
+                    <td>"Estudio" → se muestra como "En Estudio"</td>
+                </tr>
+                <tr>
+                    <td><strong>VW_FN_PRODUCTOS_SARLAFT</strong> (vista)</td>
+                    <td>Marca de productos que validan solo tomador y/o van a Outsourcing</td>
+                    <td><code>c_tomador</code> (X/null), <code>e_outsourcing</code> (X/null)</td>
+                    <td>Producto 721, Ramo 20 con e_outsourcing = 'X' → aplica ruta Outsourcing</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="info-box" style="margin-top: 20px;">
+            <strong>💡 Impacto:</strong> Si se necesita agregar un nuevo producto que pase por Conocimiento del Cliente, basta con configurar <code>r_conocimiento = 'S'</code> en las tablas FN_SE_RAMO, FN_SE_PRODUCTO y/o FN_SE_SUBPRODUCTO. No se necesita modificar código.
+        </div>
+
+        <div class="separator"></div>
+
+        <h3>⚙️ B) Reglas HARDCODEADAS en el Código (Requieren desarrollo para cambiar)</h3>
+        <p>Estas reglas están escritas directamente en las funciones PL/SQL. Para modificarlas se requiere un cambio de código, pruebas y despliegue:</p>
+
+        <table class="rules-table">
+            <thead>
+                <tr>
+                    <th>Regla</th>
+                    <th>¿Dónde está?</th>
+                    <th>Descripción</th>
+                    <th>¿Por qué está en código?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Exclusión Bancaseguros Ramo 1</strong></td>
+                    <td>fn_obtener_escritorio<br>fn_obtener_escritorio_marcas</td>
+                    <td>Ramo 1, Producto 250, Subproductos 274/288/311 <strong>nunca</strong> pasan por CC</td>
+                    <td>Regla fija desde 2020, no parametrizable</td>
+                </tr>
+                <tr>
+                    <td><strong>Producto 445 Cuotas al Día</strong></td>
+                    <td>fn_obtener_escritorio<br>fn_obtener_escritorio_marcas</td>
+                    <td>Ramo 4, Producto 445: Nuevo Negocio <strong>siempre</strong> va a CC, otros movimientos a Análisis Riesgo</td>
+                    <td>Regla de negocio específica, no generalizable</td>
+                </tr>
+                <tr>
+                    <td><strong>Cotización con excepción — Líderes</strong></td>
+                    <td>fn_obtener_escritorio<br>fn_obtener_escritorio_marcas</td>
+                    <td>Ramo 1, Prod 250, MN01 con excepción = 1 → Líderes Operaciones</td>
+                    <td>Caso de uso muy específico</td>
+                </tr>
+                <tr>
+                    <td><strong>Lista de productos Solo Tomador</strong></td>
+                    <td>fn_obtener_escritorio</td>
+                    <td>Ramos 4,10,18,20,21,24,29 con lista fija de productos que solo validan tomador (no asegurado)</td>
+                    <td>Versión legacy — la versión de marcas usa la vista VW_FN_PRODUCTOS_SARLAFT</td>
+                </tr>
+                <tr>
+                    <td><strong>Productos Outsourcing por código</strong></td>
+                    <td>fn_obtener_escritorio</td>
+                    <td>Lista fija: Ramo 20 (721,749,793), Ramo 21 (719,764,765,792), Ramo 29 (710,717,766,799), etc.</td>
+                    <td>Versión legacy — la versión de marcas usa <code>e_outsourcing</code> de la vista</td>
+                </tr>
+                <tr>
+                    <td><strong>Subtipos de modificación para Outsourcing</strong></td>
+                    <td>fn_obtener_escritorio<br>fn_obtener_escritorio_marcas</td>
+                    <td>Solo los subtipos ADVA, IER, CB, IEC, CO van a Outsourcing en modificaciones</td>
+                    <td>Lista fija en el código, no parametrizada</td>
+                </tr>
+                <tr>
+                    <td><strong>Validación de Corredor</strong></td>
+                    <td>fn_obtener_escritorio</td>
+                    <td>Si el asesor es corredor → Análisis Corredores (llama a PRC_RETORNA_CORREDOR)</td>
+                    <td>La lógica de "quién es corredor" está en otro procedimiento</td>
+                </tr>
+                <tr>
+                    <td><strong>Estado Autoservicio/Provisorio → Gestión</strong></td>
+                    <td>fn_obtener_escritorio<br>fn_obtener_escritorio_marcas</td>
+                    <td>Si estado de negocio es Autoservicio o Provisorio → escritorio GESTION directamente</td>
+                    <td>Regla fija de enrutamiento directo</td>
+                </tr>
+                <tr>
+                    <td><strong>Ramo 801 — Títulos de Capitalización</strong></td>
+                    <td>fn_obtener_escritorio_marcas</td>
+                    <td>Ramo 801: solo Nuevo Negocio (MN02) evalúa CC, otros movimientos no</td>
+                    <td>Regla de negocio específica del ramo</td>
+                </tr>
+                <tr>
+                    <td><strong>Error servicio de Marcas (NM)</strong></td>
+                    <td>fn_obtener_escritorio_marcas</td>
+                    <td>Si continuarproceso = 'NM' (error del servicio): evalúa solo tipo de movimiento → CC si aplica</td>
+                    <td>Fallback de contingencia</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="info-box warning" style="margin-top: 20px;">
+            <strong>⚠️ Riesgo:</strong> Las reglas hardcodeadas en <code>fn_obtener_escritorio</code> (versión de Terceros) son difíciles de mantener porque usan listas estáticas de ramos/productos. La versión más nueva (<code>fn_obtener_escritorio_marcas</code>) mejora esto parcialmente al usar la vista <strong>VW_FN_PRODUCTOS_SARLAFT</strong>, pero aún conserva reglas fijas.
+        </div>
+
+        <div class="separator"></div>
+
+        <h3>🔄 C) Dos Versiones del Motor de Reglas</h3>
+        <p>Existen <strong>dos funciones</strong> que calculan el escritorio, y se usa una u otra dependiendo de cómo llegue el caso:</p>
+
+        <div class="branches">
+            <div class="branch" style="border-color: #2196f3;">
+                <h4>fn_obtener_escritorio</h4>
+                <p style="font-size:0.85rem; color:var(--gray); margin-bottom:12px;"><strong>Servicio de Terceros</strong><br>Se usa cuando: <code>continuarproceso</code> es NULL</p>
+                <div class="branch-item">Listas de productos <strong>hardcodeadas</strong> en el código</div>
+                <div class="branch-item">Valida si asesor es <strong>Corredor</strong></div>
+                <div class="branch-item">Versión <strong>legacy</strong> (desde 2019)</div>
+            </div>
+            <div class="branch" style="border-color: #9c27b0;">
+                <h4>fnc_obtener_escritorio_marcas</h4>
+                <p style="font-size:0.85rem; color:var(--gray); margin-bottom:12px;"><strong>Servicio de Marcas Sarlaft</strong><br>Se usa cuando: <code>continuarproceso</code> NO es NULL</p>
+                <div class="branch-item">Usa vista <strong>VW_FN_PRODUCTOS_SARLAFT</strong> (parametrizable)</div>
+                <div class="branch-item">Maneja fallback <strong>NM</strong> por error del servicio</div>
+                <div class="branch-item">Versión <strong>actual</strong> (desde 2022, proyecto Sarlaft 4.0)</div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <strong>💡 ¿Cuál se ejecuta?</strong> Depende del sistema que origina el caso:
+            <ul style="margin: 8px 0 0 20px;">
+                <li><strong>SIMON Servicios / SIMON Vida:</strong> Envían el parámetro <code>continuarproceso</code> con un valor → se usa <strong>fn_obtener_escritorio_marcas</strong></li>
+                <li><strong>FileNet directo / otros sistemas:</strong> No envían <code>continuarproceso</code> → se usa <strong>fn_obtener_escritorio</strong></li>
+            </ul>
+        </div>
+
+        <div class="separator"></div>
+
+        <h3>📋 D) Resumen: ¿Quién puede cambiar cada regla?</h3>
+        <table class="rules-table">
+            <thead>
+                <tr>
+                    <th>Necesidad de cambio</th>
+                    <th>¿Quién lo resuelve?</th>
+                    <th>¿Cómo?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Agregar un nuevo ramo/producto que requiera Conocimiento del Cliente</td>
+                    <td>DBA / Administrador de datos</td>
+                    <td>Actualizar <code>r_conocimiento = 'S'</code> en las tablas de Ramo, Producto o Subproducto</td>
+                </tr>
+                <tr>
+                    <td>Cambiar si un tipo de movimiento requiere CC o no</td>
+                    <td>DBA / Administrador de datos</td>
+                    <td>Actualizar <code>r_conocimiento</code> en FN_SE_MOVIMIENTO_NEGOCIO</td>
+                </tr>
+                <tr>
+                    <td>Agregar/quitar subtipos de modificación que incluyen CC</td>
+                    <td>DBA / Administrador de datos</td>
+                    <td>Actualizar <code>INCLUYE_CC</code> en FN_SE_TIPO_MODIFICACION</td>
+                </tr>
+                <tr>
+                    <td>Marcar un producto como Outsourcing</td>
+                    <td>DBA / Administrador de datos</td>
+                    <td>Actualizar la vista VW_FN_PRODUCTOS_SARLAFT (solo aplica para servicio de Marcas)</td>
+                </tr>
+                <tr>
+                    <td>Agregar producto a la lista hardcodeada de Outsourcing (servicio Terceros)</td>
+                    <td><strong>Equipo de desarrollo</strong></td>
+                    <td>Modificar función <code>fn_obtener_escritorio</code>, compilar, probar, desplegar</td>
+                </tr>
+                <tr>
+                    <td>Cambiar la regla de Cuotas al Día (Prod 445)</td>
+                    <td><strong>Equipo de desarrollo</strong></td>
+                    <td>Modificar función, compilar, probar, desplegar</td>
+                </tr>
+                <tr>
+                    <td>Cambiar los subtipos de modificación que van a Outsourcing (ADVA, IER, CB, IEC, CO)</td>
+                    <td><strong>Equipo de desarrollo</strong></td>
+                    <td>Modificar la cadena hardcodeada en ambas funciones</td>
+                </tr>
+                <tr>
+                    <td>Agregar un nuevo escritorio/bandeja de trabajo</td>
+                    <td>DBA + <strong>Desarrollo</strong></td>
+                    <td>Crear en FN_SE_ESCRITORIOS + agregar lógica en las funciones de enrutamiento</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 3. Escritorios -->
+    <div class="section" id="escritorios">
+        <h2>🏢 3. Escritorios (Bandejas de Trabajo)</h2>
+        <p>Los escritorios son las bandejas donde los equipos de trabajo reciben y procesan los casos:</p>
+
+        <div class="escritorios-grid">
+            <div class="escritorio-card cc">
+                <h4>🔍 Conocimiento del Cliente</h4>
+                <p>Casos que requieren validación de información Sarlaft del cliente (estado financiero, exceptuados).</p>
+            </div>
+            <div class="escritorio-card ar">
+                <h4>⚠️ Análisis de Riesgo</h4>
+                <p>Casos que requieren evaluación de riesgo antes de continuar. Es el escritorio <strong>por defecto</strong> cuando no aplica otra regla.</p>
+            </div>
+            <div class="escritorio-card corr">
+                <h4>📊 Análisis Corredores</h4>
+                <p>Casos de intermediarios identificados como Corredores de seguros. Se valida la clave del asesor.</p>
+            </div>
+            <div class="escritorio-card out">
+                <h4>📦 Outsourcing</h4>
+                <p>Casos de productos de Bancaseguros o vida colectivos que cumplen condiciones específicas de validación simplificada.</p>
+            </div>
+            <div class="escritorio-card lid">
+                <h4>👔 Líderes Operaciones</h4>
+                <p>Casos con excepción de negocio (cotizaciones del Ramo 1 - Automóviles, Producto 250).</p>
+            </div>
+            <div class="escritorio-card gest">
+                <h4>📂 Gestión Documental</h4>
+                <p>Casos con estado "Autoservicio" o "Provisorio" — requieren gestión documental sin análisis.</p>
+            </div>
+            <div class="escritorio-card rec">
+                <h4>🔄 Recursivo</h4>
+                <p>Casos expedidos o en estudio que requieren recirculación para seguimiento.</p>
+            </div>
+            <div class="escritorio-card term">
+                <h4>🛑 Terminar</h4>
+                <p>Casos rechazados — el flujo se cierra.</p>
+            </div>
+        </div>
+
+        <div class="legend" style="margin-top: 20px;">
+            <div class="legend-item"><div class="legend-dot" style="background:#9c27b0"></div>Conocimiento Cliente</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#e53935"></div>Análisis Riesgo</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#795548"></div>Análisis Corredores</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ff9800"></div>Outsourcing</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#2196f3"></div>Líderes Operaciones</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#00bcd4"></div>Gestión</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#4caf50"></div>Recursivo</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#607d8b"></div>Terminar</div>
+        </div>
+    </div>
+
+    <!-- 3. Flujo General -->
+    <div class="section" id="flujo-general">
+        <h2>🔄 4. Flujo General del Proceso</h2>
+        <p>Al crear un consecutivo, el sistema ejecuta el siguiente proceso:</p>
+
+        <div class="timeline">
+            <div class="timeline-item" data-step="1">
+                <h4>Recepción de la solicitud</h4>
+                <p>Un sistema origen (SIMON Servicios, SIMON Vida, FileNet directo, etc.) envía la solicitud de creación de caso con todos los datos del negocio.</p>
+            </div>
+            <div class="timeline-item" data-step="2">
+                <h4>Evaluación de reglas de negocio</h4>
+                <p>El motor de reglas evalúa: tipo de movimiento, ramo/producto/subproducto, estado financiero del cliente, excepciones, y si el asesor es corredor.</p>
+            </div>
+            <div class="timeline-item" data-step="3">
+                <h4>Determinación del escritorio destino</h4>
+                <p>Según las reglas evaluadas, se asigna la bandeja de trabajo (escritorio) donde será procesado el caso.</p>
+            </div>
+            <div class="timeline-item" data-step="4">
+                <h4>Determinación del estado</h4>
+                <p>Se asigna el estado inicial del caso (Pendiente, Estudio, Expedido, etc.) según el control documental o el estado de negocio informado.</p>
+            </div>
+            <div class="timeline-item" data-step="5">
+                <h4>Registro del consecutivo</h4>
+                <p>Se crea el registro en el sistema con el número de caso, escritorio asignado, estado, y todos los datos del negocio.</p>
+            </div>
+            <div class="timeline-item" data-step="6">
+                <h4>Disponible en bandeja</h4>
+                <p>El caso queda visible en el escritorio asignado para que el equipo correspondiente lo gestione.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Reglas de Enrutamiento -->
+    <div class="section" id="reglas">
+        <h2>⚙️ 5. Reglas de Enrutamiento — Orden de Evaluación</h2>
+        <p>Las reglas se evalúan en un orden de prioridad. La primera regla que se cumple determina el escritorio:</p>
+
+        <div class="diagram-box">
+            <div class="flow-container">
+                <div class="flow-step inicio">
+                    <strong>INICIO</strong><br>Llega solicitud de nuevo caso
+                </div>
+                <div class="flow-arrow">▼</div>
+
+                <div class="flow-step decision">
+                    <strong>¿Estado = Autoservicio o Provisorio?</strong><br>
+                    <small>Si el estado de negocio es Autoservicio o Provisorio</small>
+                </div>
+                <div class="flow-arrow">SÍ → <span class="badge badge-gest">GESTIÓN</span> &nbsp;|&nbsp; NO ▼</div>
+
+                <div class="flow-step decision">
+                    <strong>¿El tipo de movimiento requiere Conocimiento del Cliente?</strong><br>
+                    <small>Se consulta la configuración del tipo de movimiento</small>
+                </div>
+                <div class="flow-arrow">NO requiere → evalúa Control Documental → <span class="badge badge-rec">EXPEDIDOS</span> &nbsp;|&nbsp; SÍ requiere ▼</div>
+
+                <div class="flow-step decision">
+                    <strong>¿Es Modificación (MN04)?</strong><br>
+                    <small>Evalúa si los subtipos de modificación incluyen conocimiento del cliente</small>
+                </div>
+                <div class="flow-arrow">Subtipos excluyen CC → salta regla &nbsp;|&nbsp; Incluyen CC ▼</div>
+
+                <div class="flow-step decision">
+                    <strong>¿El Ramo / Producto / Subproducto tiene marca de conocimiento?</strong><br>
+                    <small>Evaluación jerárquica: Ramo → Producto → Subproducto</small>
+                </div>
+                <div class="flow-arrow">NO tiene marca → no requiere CC &nbsp;|&nbsp; SÍ tiene marca ▼</div>
+
+                <div class="flow-step decision">
+                    <strong>¿El cliente está exceptuado o con estado financiero actualizado?</strong><br>
+                    <small>Reglas Sarlaft: estado financiero del tomador/asegurado</small>
+                </div>
+                <div class="flow-arrow">Exceptuado/Actualizado → no CC &nbsp;|&nbsp; Requiere validación ▼</div>
+
+                <div class="flow-step decision">
+                    <strong>¿Es producto con regla de Outsourcing?</strong><br>
+                    <small>Productos de Bancaseguros o vida colectivos con marca outsourcing</small>
+                </div>
+                <div class="flow-arrow">SÍ aplica → <span class="badge badge-out">OUTSOURCING</span> &nbsp;|&nbsp; NO ▼</div>
+
+                <div class="flow-step decision">
+                    <strong>¿Cumple condiciones para Conocimiento del Cliente?</strong><br>
+                    <small>Combinación de todas las evaluaciones anteriores</small>
+                </div>
+                <div class="flow-arrow">SÍ → <span class="badge badge-cc">CONOCIMIENTO CLIENTE</span> &nbsp;|&nbsp; NO ▼</div>
+
+                <div class="flow-step decision">
+                    <strong>¿El asesor es un Corredor?</strong><br>
+                    <small>Se valida la clave del intermediario contra la tabla de corredores</small>
+                </div>
+                <div class="flow-arrow">SÍ → <span class="badge badge-corr">ANÁLISIS CORREDORES</span> &nbsp;|&nbsp; NO ▼</div>
+
+                <div class="flow-step escritorio">
+                    <strong>ANÁLISIS DE RIESGO</strong><br>
+                    <small>Escritorio por defecto cuando no aplica ninguna otra regla</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box warning">
+            <strong>⚠️ Regla especial:</strong> Ramo 1 (Automóviles), Producto 250, con excepción de negocio activa y movimiento Cotización (MN01) → se envía directamente a <strong>Líderes Operaciones</strong>, sin importar las demás reglas.
+        </div>
+    </div>
+
+    <!-- 5. Tipos de Movimiento -->
+    <div class="section" id="movimientos">
+        <h2>📋 6. Tipos de Movimiento de Negocio</h2>
+        <p>El tipo de movimiento es el primer criterio que evalúa el motor. Cada tipo tiene configurado si <strong>requiere o no</strong> pasar por Conocimiento del Cliente:</p>
+
+        <table class="rules-table">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Movimiento</th>
+                    <th>¿Requiere Conocimiento?</th>
+                    <th>Reglas Especiales</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>MN01</strong></td>
+                    <td>Cotización</td>
+                    <td>Configurado por parametría</td>
+                    <td>Ramo 1 + Prod 250 + excepción → Líderes Operaciones</td>
+                </tr>
+                <tr>
+                    <td><strong>MN02</strong></td>
+                    <td>Nuevo Negocio</td>
+                    <td>Configurado por parametría</td>
+                    <td>Productos de Outsourcing: si tomador actualizado → Outsourcing; Prod 445 siempre → CC</td>
+                </tr>
+                <tr>
+                    <td><strong>MN03</strong></td>
+                    <td>Renovación</td>
+                    <td>Configurado por parametría</td>
+                    <td>Similar a MN02 en servicio de marcas</td>
+                </tr>
+                <tr>
+                    <td><strong>MN04</strong></td>
+                    <td>Modificación</td>
+                    <td>Depende del subtipo</td>
+                    <td>Evalúa cada subtipo de modificación individualmente (INCLUYE_CC = S/N). Subtipos ADVA, IER, CB, IEC, CO pueden ir a Outsourcing</td>
+                </tr>
+                <tr>
+                    <td><strong>MN05</strong></td>
+                    <td>Cancelación</td>
+                    <td>Configurado por parametría</td>
+                    <td>Productos Outsourcing → directo a Outsourcing sin validar CC</td>
+                </tr>
+                <tr>
+                    <td><strong>MN10</strong></td>
+                    <td>Nuevo Negocio Póliza Principal</td>
+                    <td>Configurado por parametría</td>
+                    <td>Productos de bienestar — regla actualmente inactiva</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="info-box" style="margin-top:20px;">
+            <strong>📝 Nota:</strong> La columna "¿Requiere Conocimiento?" se configura en la tabla <em>FN_SE_MOVIMIENTO_NEGOCIO</em> (campo <code>r_conocimiento</code>). Si el valor es 'S', el motor continúa evaluando las demás reglas; si es 'N', el caso NO pasa por Conocimiento del Cliente.
+        </div>
+    </div>
+
+    <!-- 6. Sarlaft -->
+    <div class="section" id="sarlaft">
+        <h2>🔐 7. Reglas de Conocimiento del Cliente (Sarlaft)</h2>
+        <p>La evaluación Sarlaft determina si un caso debe pasar por el escritorio de Conocimiento del Cliente. Se evalúan las siguientes condiciones:</p>
+
+        <h3>6.1 Evaluación jerárquica Ramo → Producto → Subproducto</h3>
+        <div class="diagram-box">
+            <div class="flow-container" style="align-items: flex-start; padding: 15px;">
+                <p>El sistema evalúa en cascada:</p>
+                <ol style="margin: 10px 0 10px 25px;">
+                    <li><strong>Ramo:</strong> ¿El ramo tiene marca de conocimiento del cliente? (campo <em>r_conocimiento</em>)</li>
+                    <li><strong>Producto:</strong> Si el ramo dice SÍ → ¿El producto también requiere?</li>
+                    <li><strong>Subproducto:</strong> Si el producto dice SÍ → ¿El subproducto también requiere?</li>
+                </ol>
+                <p>Si en cualquier nivel la marca es 'N', el caso <strong>no requiere</strong> Conocimiento del Cliente por esta regla.</p>
+            </div>
+        </div>
+
+        <h3>6.2 Condiciones del Tomador / Asegurado</h3>
+        <table class="rules-table">
+            <thead>
+                <tr>
+                    <th>Condición</th>
+                    <th>Resultado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Tomador exceptuado = SÍ y Asegurado NULL o también exceptuado</td>
+                    <td><span class="badge badge-ar">NO pasa por CC</span> → sigue a otra bandeja</td>
+                </tr>
+                <tr>
+                    <td>Estado financiero del tomador = Actualizado ('N') <em>(productos solo-tomador)</em></td>
+                    <td><span class="badge badge-ar">NO pasa por CC</span></td>
+                </tr>
+                <tr>
+                    <td>Tomador exceptuado = SÍ <em>(productos solo-tomador)</em></td>
+                    <td><span class="badge badge-ar">NO pasa por CC</span></td>
+                </tr>
+                <tr>
+                    <td>Estado financiero desactualizado Y no exceptuado</td>
+                    <td><span class="badge badge-cc">SÍ pasa por Conocimiento del Cliente</span></td>
+                </tr>
+                <tr>
+                    <td>Tomador Y asegurado con estado financiero desactualizado <em>(servicio de marcas)</em></td>
+                    <td><span class="badge badge-cc">SÍ pasa por Conocimiento del Cliente</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>6.3 Exclusiones Específicas</h3>
+        <div class="info-box">
+            <strong>Bancaseguros excluidos:</strong> Ramo 1 (Automóviles), Producto 250, Subproductos 274, 288, 311 — <strong>nunca</strong> pasan por Conocimiento del Cliente, independientemente del estado financiero.
+        </div>
+
+        <h3>6.4 Producto 445 — Cuotas al Día (Ramo 4)</h3>
+        <div class="info-box warning">
+            <strong>Regla especial:</strong> Todo <strong>Nuevo Negocio</strong> (MN02) del producto 445, ramo 4 (Cumplimiento) pasa <strong>siempre</strong> a Conocimiento del Cliente, sin importar si el estado financiero está actualizado. Los demás movimientos van a Análisis de Riesgo.
+        </div>
+    </div>
+
+    <!-- 7. Outsourcing -->
+    <div class="section" id="outsourcing">
+        <h2>📦 8. Reglas de Outsourcing</h2>
+        <p>Ciertos productos se gestionan en el escritorio de Outsourcing bajo condiciones específicas:</p>
+
+        <h3>7.1 Productos Bancaseguros (Ramo 20)</h3>
+        <table class="rules-table">
+            <thead>
+                <tr>
+                    <th>Ramo</th>
+                    <th>Producto</th>
+                    <th>Descripción</th>
+                    <th>Regla</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>20</td>
+                    <td>721</td>
+                    <td>DAVIDA INTEGRAL</td>
+                    <td>MN02 o MN05 → Outsourcing <strong>sin validar tomador</strong></td>
+                </tr>
+                <tr>
+                    <td>20</td>
+                    <td>749</td>
+                    <td>PLAN CRECIENTE DAVIVIENDA</td>
+                    <td>MN02 o MN05 → Outsourcing <strong>sin validar tomador</strong></td>
+                </tr>
+                <tr>
+                    <td>20</td>
+                    <td>793</td>
+                    <td>VIDA GRUPO NEGOCIOS DAVIVIENDA</td>
+                    <td>MN02 o MN05 → Outsourcing <strong>sin validar tomador</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>7.2 Productos Vida Colectivos (Solo Tomador + Outsourcing)</h3>
+        <table class="rules-table">
+            <thead>
+                <tr>
+                    <th>Ramo</th>
+                    <th>Productos</th>
+                    <th>Condición para Outsourcing</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>21</td>
+                    <td>719, 764, 765, 792</td>
+                    <td>MN02/MN05 con tomador actualizado → Outsourcing</td>
+                </tr>
+                <tr>
+                    <td>29</td>
+                    <td>710, 717, 766, 799</td>
+                    <td>MN02/MN05 con tomador actualizado → Outsourcing</td>
+                </tr>
+                <tr>
+                    <td>118</td>
+                    <td>821 (Seniors)</td>
+                    <td>Valida tomador <strong>y</strong> asegurado</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>7.3 Modificaciones con Prima → Outsourcing</h3>
+        <p>Para los productos con marca de outsourcing, las modificaciones (MN04) con subtipos de prima van a Outsourcing:</p>
+        <div class="info-box">
+            <strong>Subtipos de modificación que aplican:</strong> ADVA (Adición de Valor), IER (Incremento en Renta), CB (Cambio de Beneficiario), IEC (Incremento en Capital), CO (Conversión).
+        </div>
+    </div>
+
+    <!-- 8. Estados -->
+    <div class="section" id="estados">
+        <h2>📊 9. Estados del Consecutivo</h2>
+        <p>El estado indica en qué punto del ciclo de vida se encuentra el caso:</p>
+
+        <table class="rules-table">
+            <thead>
+                <tr>
+                    <th>Estado</th>
+                    <th>Significado</th>
+                    <th>¿Cómo se determina?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Pendiente</strong></td>
+                    <td>Caso recién creado, pendiente de gestión</td>
+                    <td>Estado por defecto cuando no hay control documental ni estado informado</td>
+                </tr>
+                <tr>
+                    <td><strong>En Estudio</strong></td>
+                    <td>Caso en análisis por el equipo asignado</td>
+                    <td>Asignado cuando el estado de negocio es "Estudio"</td>
+                </tr>
+                <tr>
+                    <td><strong>Devuelto</strong></td>
+                    <td>Caso devuelto por falta de información o documentos</td>
+                    <td>Asignado por el equipo que lo devuelve con causas de devolución</td>
+                </tr>
+                <tr>
+                    <td><strong>Solicitud Adicionales</strong></td>
+                    <td>Se requiere documentación adicional del cliente</td>
+                    <td>Estado "Soladic" — requiere respuesta del solicitante</td>
+                </tr>
+                <tr>
+                    <td><strong>Expedido</strong></td>
+                    <td>Caso aprobado y expedido exitosamente</td>
+                    <td>Determinado por control documental o estado "Expedido"</td>
+                </tr>
+                <tr>
+                    <td><strong>Rechazado</strong></td>
+                    <td>Caso rechazado — el flujo se cierra</td>
+                    <td>Estado "Rechazado" → escritorio TERMINAR</td>
+                </tr>
+                <tr>
+                    <td><strong>Autoservicio</strong></td>
+                    <td>Caso gestionado por autoservicio</td>
+                    <td>Viene del sistema origen → escritorio GESTIÓN</td>
+                </tr>
+                <tr>
+                    <td><strong>Provisorio</strong></td>
+                    <td>Caso en estado provisional</td>
+                    <td>Viene del sistema origen → escritorio GESTIÓN</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 9. Dos Flujos -->
+    <div class="section" id="dos-flujos">
+        <h2>🔀 10. Dos Flujos de Trabajo</h2>
+        <p>FileNet gestiona dos flujos diferentes según la naturaleza del caso:</p>
+
+        <div class="branches">
+            <div class="branch" style="border-color: var(--secondary);">
+                <h4>🏢 Flujo de Suscripción y Emisión</h4>
+                <p style="font-size:0.85rem; color:var(--gray); margin-bottom:12px;">Para casos de pólizas (nuevos negocios, modificaciones, cancelaciones, renovaciones)</p>
+                <div class="branch-item">Ramo + Producto + Subproducto</div>
+                <div class="branch-item">Tipo de Movimiento de Negocio</div>
+                <div class="branch-item">Director Comercial + Clave Asesor</div>
+                <div class="branch-item">Número de Póliza / Título</div>
+                <div class="branch-item">Estado Financiero + Exceptuado</div>
+                <div class="branch-item">Datos Tomador + Asegurado</div>
+                <div class="branch-item"><strong>Motor de reglas completo</strong></div>
+            </div>
+            <div class="branch" style="border-color: #9c27b0;">
+                <h4>👤 Flujo de Conocimiento del Cliente</h4>
+                <p style="font-size:0.85rem; color:var(--gray); margin-bottom:12px;">Para casos de validación de terceros (vinculación, actualización de datos Sarlaft)</p>
+                <div class="branch-item">Tipo de Movimiento + Sub-Movimiento</div>
+                <div class="branch-item">Tipo de Servicio</div>
+                <div class="branch-item">Tipo/Número Documento</div>
+                <div class="branch-item">Nombres del cliente</div>
+                <div class="branch-item">Causas de devolución</div>
+                <div class="branch-item">Caso externo + Sistema origen</div>
+                <div class="branch-item"><strong>Escritorio asignado directamente</strong></div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <strong>Diferencia clave:</strong> El flujo de Suscripción/Emisión usa el motor de reglas completo para determinar el escritorio automáticamente. El flujo de Conocimiento del Cliente recibe el escritorio directamente del paso del workflow que lo envía.
+        </div>
+    </div>
+
+    <!-- 10. Trazabilidad -->
+    <div class="section" id="trazabilidad">
+        <h2>📜 11. Trazabilidad y Consulta</h2>
+        <p>Cada movimiento del caso queda registrado con la siguiente información:</p>
+
+        <table class="rules-table">
+            <thead>
+                <tr>
+                    <th>Dato Registrado</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Número de Caso</strong></td><td>Consecutivo único del caso</td></tr>
+                <tr><td><strong>Escritorio Inicial</strong></td><td>Bandeja de donde salió el caso</td></tr>
+                <tr><td><strong>Escritorio Final</strong></td><td>Bandeja a donde llegó el caso</td></tr>
+                <tr><td><strong>Estado</strong></td><td>Estado de negocio al momento del movimiento</td></tr>
+                <tr><td><strong>Fecha de Registro</strong></td><td>Momento exacto de la transición</td></tr>
+                <tr><td><strong>Comentarios</strong></td><td>Observaciones del analista (máx. 512 caracteres)</td></tr>
+                <tr><td><strong>Causas de Devolución</strong></td><td>Motivos de devolución si aplica</td></tr>
+                <tr><td><strong>Sistema Origen</strong></td><td>Sistema que originó el caso (SIMONS, SIMONV, FLN, etc.)</td></tr>
+                <tr><td><strong>Caso Externo</strong></td><td>Referencia al caso en el sistema origen</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Consulta de consecutivos</h3>
+        <p>La aplicación de consulta permite filtrar casos por:</p>
+        <ul style="margin: 10px 0 10px 25px; columns: 2;">
+            <li>Rango de fechas (máximo 30 días)</li>
+            <li>Número de consecutivo</li>
+            <li>Estado del caso</li>
+            <li>Ramo / Producto / Subproducto</li>
+            <li>Escritorio asignado</li>
+            <li>Localidad</li>
+            <li>Tipo de movimiento</li>
+            <li>Caso externo</li>
+            <li>Sistema origen</li>
+            <li>Identificación del tomador</li>
+        </ul>
+
+        <div class="info-box" style="margin-top:15px;">
+            <strong>💡 Estado actual del caso:</strong> Siempre corresponde al registro más reciente. Si un caso tiene 5 movimientos, el estado y escritorio del movimiento #5 es el estado actual.
+        </div>
+    </div>
+
+    <div class="separator"></div>
+
+    <!-- 12. Servicios API -->
+    <div class="section" id="servicios">
+        <h2>🌐 12. Servicios API — Integración</h2>
+        <p>FileNet expone los siguientes servicios REST para que los sistemas origen creen casos, adjunten documentos, actualicen estados y consulten listas:</p>
+
+        <!-- Servicio 1: Crear Caso Transversal -->
+        <h3>12.1 Crear Caso (Servicio Transversal)</h3>
+        <div class="info-box">
+            <strong>Endpoint:</strong> <code>POST /documentos_archivos_filenet/api/v1/filenet/case</code><br>
+            <strong>Autenticación:</strong> Header <code>x-api-key</code><br>
+            <strong>Content-Type:</strong> application/json
+        </div>
+
+        <p>Este servicio crea un consecutivo en FileNet. Soporta dos flujos según el campo <code>nombreFlujo</code>:</p>
+
+        <table class="rules-table">
+            <thead>
+                <tr>
+                    <th>Campo</th>
+                    <th>Tipo</th>
+                    <th>Obligatorio</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>body.nombreFlujo</strong></td><td>String</td><td>Sí</td><td>Nombre del flujo: <code>"SB_Suscripcion_Emision"</code> o <code>"SB_Flujo_Conocimiento_Terceros"</code></td></tr>
+                <tr><td><strong>body.propiedades</strong></td><td>List</td><td>Sí</td><td>Lista de pares llave/valor con los datos del caso</td></tr>
+                <tr><td><strong>trace.ipAddr</strong></td><td>String</td><td>Sí</td><td>IP del sistema solicitante</td></tr>
+                <tr><td><strong>trace.userId</strong></td><td>String</td><td>Sí</td><td>ID del usuario/sistema (ej: "SIMONS")</td></tr>
+            </tbody>
+        </table>
+
+        <h4 style="margin-top:20px; color:var(--secondary);">Ejemplo cURL — Flujo Suscripción y Emisión</h4>
+        <div class="diagram-box" style="background:#1e1e1e; color:#d4d4d4; font-family: 'Courier New', monospace; font-size:0.8rem; overflow-x:auto; white-space:pre; line-height:1.5;">curl -X POST "https://{host}/documentos_archivos_filenet/api/v1/filenet/case" \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: {api-key}" \
+  -d '{
+    "body": {
+      "nombreFlujo": "SB_Suscripcion_Emision",
+      "propiedades": [
+        { "llave": "Ramo", "valor": "23" },
+        { "llave": "Producto", "valor": "100" },
+        { "llave": "Subproducto", "valor": "1" },
+        { "llave": "TipoCliente", "valor": "NATURAL" },
+        { "llave": "TipoActuacion", "valor": "Tomador" },
+        { "llave": "TipoMovNegocio", "valor": "MN05" },
+        { "llave": "TomadorAsegurado", "valor": "NO" },
+        { "llave": "TipoDocumento", "valor": "CC" },
+        { "llave": "NumDocumento", "valor": "1234567890" },
+        { "llave": "Nombres", "valor": "Juan Perez" },
+        { "llave": "ServicioConocimiento", "valor": "Marcas" },
+        { "llave": "Exceptuado", "valor": "N" },
+        { "llave": "FechaEstadoFin", "valor": "2026/12/31" },
+        { "llave": "ContinuarProceso", "valor": "S" },
+        { "llave": "EstadoFinanciero", "valor": "N" },
+        { "llave": "AsegTipoDocumento", "valor": "CC" },
+        { "llave": "AsegNumDocumento", "valor": "9876543210" },
+        { "llave": "AsegNombres", "valor": "Maria Garcia" },
+        { "llave": "AsegExceptuado", "valor": "N" },
+        { "llave": "AsegFechaFinan", "valor": "2026/12/31" },
+        { "llave": "AsegContinuarProceso", "valor": "S" },
+        { "llave": "AsegActualizarEstado", "valor": "N" },
+        { "llave": "EstadoNeg", "valor": "Pendiente" },
+        { "llave": "Outsourcing", "valor": "false" },
+        { "llave": "ClaveAsesor", "valor": "12345" },
+        { "llave": "LocalidadRad", "valor": "1000" },
+        { "llave": "DirectComer", "valor": "55555" },
+        { "llave": "NumeroSolicitudes", "valor": "1" },
+        { "llave": "ExcepcionNeg", "valor": "false" },
+        { "llave": "NumPoliza", "valor": "POL2026001234" },
+        { "llave": "Placa", "valor": "ABC123" },
+        { "llave": "F_Comment", "valor": "Solicitud de cancelacion" },
+        { "llave": "F_Responses", "valor": "Iniciar Flujo" },
+        { "llave": "NumeroCasoExterno", "valor": "FV-12345" },
+        { "llave": "Anterior", "valor": "FV-11000" }
+      ]
+    },
+    "trace": { "ipAddr": "127.0.0.1", "userId": "SIMONS" }
+  }'</div>
+
+        <h4 style="margin-top:20px; color:var(--secondary);">Ejemplo cURL — Flujo Conocimiento de Terceros</h4>
+        <div class="diagram-box" style="background:#1e1e1e; color:#d4d4d4; font-family: 'Courier New', monospace; font-size:0.8rem; overflow-x:auto; white-space:pre; line-height:1.5;">curl -X POST "https://{host}/documentos_archivos_filenet/api/v1/filenet/case" \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: {api-key}" \
+  -d '{
+    "body": {
+      "nombreFlujo": "SB_Flujo_Conocimiento_Terceros",
+      "propiedades": [
+        { "llave": "P_TipoMovimiento", "valor": "MN02" },
+        { "llave": "P_SubTipoMovimiento", "valor": "SMT03" },
+        { "llave": "P_TipoServicio", "valor": "TST09" },
+        { "llave": "P_TipoDocumento", "valor": "CC" },
+        { "llave": "P_NumDocumento", "valor": "1234567890" },
+        { "llave": "P_Nombres", "valor": "Juan Perez" },
+        { "llave": "P_Estado", "valor": "EST01" },
+        { "llave": "P_NumeroSolicitudes", "valor": "1" },
+        { "llave": "P_Localidad", "valor": "1000" },
+        { "llave": "P_NumeroCasoExterno", "valor": "FV-12345" },
+        { "llave": "F_Comment", "valor": "Caso de conocimiento de terceros" }
+      ]
+    },
+    "trace": { "ipAddr": "127.0.0.1", "userId": "SIMONS" }
+  }'</div>
+
+        <h4 style="margin-top:20px; color:var(--primary);">Propiedades del Flujo Suscripción y Emisión</h4>
+        <table class="rules-table">
+            <thead>
+                <tr><th>Propiedad (llave)</th><th>Descripción</th><th>Ejemplo</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Ramo</td><td>Código del ramo de seguros</td><td>"23"</td></tr>
+                <tr><td>Producto</td><td>Código del producto</td><td>"100"</td></tr>
+                <tr><td>Subproducto</td><td>Código del subproducto</td><td>"1"</td></tr>
+                <tr><td>TipoMovNegocio</td><td>Tipo de movimiento (MN01-MN10)</td><td>"MN05"</td></tr>
+                <tr><td>TipoDocumento</td><td>Tipo doc del tomador</td><td>"CC"</td></tr>
+                <tr><td>NumDocumento</td><td>Número doc del tomador</td><td>"1234567890"</td></tr>
+                <tr><td>Nombres</td><td>Nombre del tomador</td><td>"Juan Perez"</td></tr>
+                <tr><td>Exceptuado</td><td>Si el tomador es exceptuado (S/N)</td><td>"N"</td></tr>
+                <tr><td>EstadoFinanciero</td><td>Estado financiero del tomador (S/N)</td><td>"N"</td></tr>
+                <tr><td>ContinuarProceso</td><td>Resultado del servicio de marcas</td><td>"S"</td></tr>
+                <tr><td>FechaEstadoFin</td><td>Fecha del estado financiero</td><td>"2026/12/31"</td></tr>
+                <tr><td>AsegTipoDocumento</td><td>Tipo doc del asegurado</td><td>"CC"</td></tr>
+                <tr><td>AsegNumDocumento</td><td>Número doc del asegurado</td><td>"9876543210"</td></tr>
+                <tr><td>AsegNombres</td><td>Nombre del asegurado</td><td>"Maria Garcia"</td></tr>
+                <tr><td>AsegExceptuado</td><td>Si el asegurado es exceptuado (S/N)</td><td>"N"</td></tr>
+                <tr><td>AsegContinuarProceso</td><td>Resultado marcas asegurado</td><td>"S"</td></tr>
+                <tr><td>EstadoNeg</td><td>Estado de negocio inicial</td><td>"Pendiente"</td></tr>
+                <tr><td>ClaveAsesor</td><td>Clave del intermediario</td><td>"12345"</td></tr>
+                <tr><td>LocalidadRad</td><td>Código de localidad de radicación</td><td>"1000"</td></tr>
+                <tr><td>DirectComer</td><td>Documento del director comercial</td><td>"55555"</td></tr>
+                <tr><td>NumPoliza</td><td>Número de póliza</td><td>"POL2026001234"</td></tr>
+                <tr><td>Placa</td><td>Placa del vehículo (si aplica)</td><td>"ABC123"</td></tr>
+                <tr><td>NumeroCasoExterno</td><td>Referencia en el sistema origen</td><td>"FV-12345"</td></tr>
+                <tr><td>ExcepcionNeg</td><td>Si tiene excepción de negocio</td><td>"false"</td></tr>
+                <tr><td>TipoCliente</td><td>NATURAL o JURIDICO</td><td>"NATURAL"</td></tr>
+                <tr><td>TipoActuacion</td><td>Tomador o Asegurado</td><td>"Tomador"</td></tr>
+                <tr><td>ServicioConocimiento</td><td>"Marcas" o "Terceros"</td><td>"Marcas"</td></tr>
+                <tr><td>F_Comment</td><td>Comentario/observación</td><td>"Solicitud de cancelacion"</td></tr>
+                <tr><td>F_Responses</td><td>Respuesta del flujo</td><td>"Iniciar Flujo"</td></tr>
+            </tbody>
+        </table>
+
+        <h4 style="margin-top:20px; color:var(--primary);">Propiedades del Flujo Conocimiento de Terceros</h4>
+        <table class="rules-table">
+            <thead>
+                <tr><th>Propiedad (llave)</th><th>Descripción</th><th>Ejemplo</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>P_TipoMovimiento</td><td>Código tipo de movimiento</td><td>"MN02"</td></tr>
+                <tr><td>P_SubTipoMovimiento</td><td>Código subtipo de movimiento</td><td>"SMT03"</td></tr>
+                <tr><td>P_TipoServicio</td><td>Código tipo de servicio</td><td>"TST09"</td></tr>
+                <tr><td>P_TipoDocumento</td><td>Tipo doc del cliente</td><td>"CC"</td></tr>
+                <tr><td>P_NumDocumento</td><td>Número doc del cliente</td><td>"1234567890"</td></tr>
+                <tr><td>P_Nombres</td><td>Nombre del cliente</td><td>"Juan Perez"</td></tr>
+                <tr><td>P_Estado</td><td>Estado inicial del caso</td><td>"EST01"</td></tr>
+                <tr><td>P_NumeroSolicitudes</td><td>Número de solicitudes</td><td>"1"</td></tr>
+                <tr><td>P_Localidad</td><td>Código de localidad</td><td>"1000"</td></tr>
+                <tr><td>P_NumeroCasoExterno</td><td>Referencia externa</td><td>"FV-12345"</td></tr>
+                <tr><td>F_Comment</td><td>Comentario/observación</td><td>"Caso de conocimiento de terceros"</td></tr>
+            </tbody>
+        </table>
+
+        <div class="separator"></div>
+
+        <!-- Servicio 2: Crear caso Portal Intermediarios -->
+        <h3>12.2 Crear Caso (Portal de Intermediarios)</h3>
+        <div class="info-box">
+            <strong>Contexto:</strong> Este servicio es usado por el portal de intermediarios (Fuerza de Ventas) para crear casos. Tiene una estructura de campos directa (no usa pares llave/valor).
+        </div>
+
+        <h4 style="margin-top:15px; color:var(--primary);">Campos Obligatorios</h4>
+        <table class="rules-table">
+            <thead>
+                <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>estado</td><td>String</td><td>Estado del caso (ej: "Pendiente")</td></tr>
+                <tr><td>claveIntermediario</td><td>Long</td><td>Clave del intermediario que radica</td></tr>
+                <tr><td>nomTipo</td><td>String</td><td>Nombre del tipo de solicitud</td></tr>
+                <tr><td>nomSubtipo</td><td>String</td><td>Nombre del subtipo de solicitud</td></tr>
+                <tr><td>codigoTipo</td><td>String</td><td>Código del tipo de solicitud</td></tr>
+                <tr><td>codigoSubtipo</td><td>String</td><td>Código del subtipo de solicitud</td></tr>
+                <tr><td>numDocTomador</td><td>String</td><td>Número de documento del tomador</td></tr>
+                <tr><td>tipoDocTomador</td><td>String</td><td>Tipo de documento del tomador</td></tr>
+                <tr><td>razonSocialTomador</td><td>String</td><td>Nombre/razón social del tomador</td></tr>
+                <tr><td>correoElectronico</td><td>String</td><td>Correo del tomador</td></tr>
+                <tr><td>tipoDocumentoAsegurado</td><td>String</td><td>Tipo doc del asegurado</td></tr>
+                <tr><td>numDocumentoAsegurado</td><td>String</td><td>Número doc del asegurado</td></tr>
+                <tr><td>razonSocialAsegurado</td><td>String</td><td>Nombre del asegurado</td></tr>
+                <tr><td>workflowSolicitud</td><td>String</td><td>Flujo de trabajo ("FILENET", "SIMON")</td></tr>
+                <tr><td>observaciones</td><td>String</td><td>Observaciones del caso</td></tr>
+                <tr><td>tipoDocRadicador</td><td>String</td><td>Tipo doc de quien radica</td></tr>
+                <tr><td>nroDocRadicador</td><td>Long</td><td>Número doc de quien radica</td></tr>
+                <tr><td>rzonSolRadicador</td><td>String</td><td>Nombre de quien radica</td></tr>
+                <tr><td>rolesCreador</td><td>String</td><td>Roles del usuario creador</td></tr>
+                <tr><td>sistemaOrigen</td><td>String</td><td>Sistema de origen</td></tr>
+                <tr><td>tmpFolder</td><td>String</td><td>Carpeta temporal en S3 con adjuntos</td></tr>
+            </tbody>
+        </table>
+
+        <h4 style="margin-top:15px; color:var(--primary);">Campos Opcionales</h4>
+        <table class="rules-table">
+            <thead>
+                <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>celular</td><td>String</td><td>Celular del tomador</td></tr>
+                <tr><td>nroPoliza</td><td>String</td><td>Número de póliza</td></tr>
+                <tr><td>codigoRamo</td><td>BigInteger</td><td>Código del ramo</td></tr>
+                <tr><td>nombreRamo</td><td>String</td><td>Nombre del ramo</td></tr>
+                <tr><td>codigoProducto</td><td>BigInteger</td><td>Código del producto</td></tr>
+                <tr><td>nombreProducto</td><td>String</td><td>Nombre del producto</td></tr>
+                <tr><td>codigoSubproducto</td><td>BigInteger</td><td>Código del subproducto</td></tr>
+                <tr><td>nombreSubproducto</td><td>String</td><td>Nombre del subproducto</td></tr>
+                <tr><td>tipoMovNegocio</td><td>String</td><td>Tipo de movimiento del negocio</td></tr>
+                <tr><td>tipoModificacion</td><td>String</td><td>Tipo de modificación</td></tr>
+                <tr><td>tipoControlDocumental</td><td>String</td><td>Tipo de control documental</td></tr>
+                <tr><td>tipoReconsideracion</td><td>String</td><td>Tipo de reconsideración</td></tr>
+                <tr><td>continuarProceso</td><td>String</td><td>S/N — resultado marcas tomador</td></tr>
+                <tr><td>exceptuado</td><td>String</td><td>S/N — tomador exceptuado</td></tr>
+                <tr><td>fechaEstadoFin</td><td>String</td><td>Fecha estado financiero (YYYY-MM-DD)</td></tr>
+                <tr><td>asegContinuarProceso</td><td>String</td><td>S/N — resultado marcas asegurado</td></tr>
+                <tr><td>asegExceptuado</td><td>String</td><td>S/N — asegurado exceptuado</td></tr>
+                <tr><td>asegFechaFin</td><td>String</td><td>Fecha estado asegurado</td></tr>
+                <tr><td>codFasecolda</td><td>String</td><td>Código Fasecolda (vehículos)</td></tr>
+                <tr><td>tipoExcepcion</td><td>String</td><td>Tipo de excepción</td></tr>
+                <tr><td>adjuntos</td><td>List</td><td>Lista de adjuntos (nombre, tipoDocAnexo)</td></tr>
+            </tbody>
+        </table>
+
+        <div class="separator"></div>
+
+        <!-- Servicio 3: Adjuntar documento -->
+        <h3>12.3 Adjuntar Documento a un Consecutivo</h3>
+        <div class="info-box">
+            <strong>Endpoint:</strong> <code>POST /documentos_archivos_filenet/api/v1/filenet/adjunto</code><br>
+            <strong>Autenticación:</strong> Header <code>x-api-key</code><br>
+            <strong>Content-Type:</strong> multipart/form-data
+        </div>
+
+        <table class="rules-table">
+            <thead>
+                <tr><th>Parámetro</th><th>Tipo</th><th>Obligatorio</th><th>Descripción</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>file</strong></td><td>MultipartFile (form-data)</td><td>Sí</td><td>El archivo a adjuntar (PDF, imagen, etc.)</td></tr>
+                <tr><td><strong>properties</strong></td><td>String JSON (form-data)</td><td>Sí</td><td>JSON con propiedades del documento</td></tr>
+            </tbody>
+        </table>
+
+        <h4 style="margin-top:15px; color:var(--primary);">Estructura del campo <code>properties</code></h4>
+        <table class="rules-table">
+            <thead>
+                <tr><th>Campo</th><th>Descripción</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>body.archivo</td><td>Tipo de archivo/carpeta en FileNet (ej: "SuscripcionyEmision")</td></tr>
+                <tr><td>body.idFolder</td><td>ID de la carpeta destino en FileNet</td></tr>
+                <tr><td>body.propiedades[].llave/valor</td><td>Lista de propiedades del documento</td></tr>
+                <tr><td>trace.ipAddr</td><td>IP del solicitante</td></tr>
+                <tr><td>trace.userId</td><td>ID del sistema</td></tr>
+            </tbody>
+        </table>
+
+        <h4 style="margin-top:15px; color:var(--primary);">Propiedades del Documento</h4>
+        <table class="rules-table">
+            <thead>
+                <tr><th>Llave</th><th>Descripción</th><th>Ejemplo</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Numerodeconsecutivo</td><td>Número del caso en FileNet</td><td>29649</td></tr>
+                <tr><td>TipoDocumentoAnexo</td><td>Tipo de documento adjunto</td><td>"Anexos_Poliza"</td></tr>
+                <tr><td>TipoDocumentoIdCliente</td><td>Tipo doc del cliente</td><td>"CC"</td></tr>
+                <tr><td>NumeroIdentificacionCliente</td><td>Número doc del cliente</td><td>"1013599101"</td></tr>
+                <tr><td>FechaexpedicionDocumento</td><td>Fecha de expedición</td><td>"01-01-1900 00:01"</td></tr>
+                <tr><td>FechaExpiracionDocumento</td><td>Fecha de expiración</td><td>"01-01-1900 00:01"</td></tr>
+            </tbody>
+        </table>
+
+        <h4 style="margin-top:20px; color:var(--secondary);">Ejemplo cURL</h4>
+        <div class="diagram-box" style="background:#1e1e1e; color:#d4d4d4; font-family: 'Courier New', monospace; font-size:0.8rem; overflow-x:auto; white-space:pre; line-height:1.5;">curl -X POST "https://{host}/documentos_archivos_filenet/api/v1/filenet/adjunto" \
+  -H "x-api-key: {api-key}" \
+  -F "file=@/ruta/al/documento.pdf" \
+  -F 'properties={
+    "body": {
+      "archivo": "SuscripcionyEmision",
+      "idFolder": "1000",
+      "propiedades": [
+        { "llave": "Numerodeconsecutivo", "valor": 29649 },
+        { "llave": "TipoDocumentoAnexo", "valor": "Anexos_Poliza" },
+        { "llave": "TipoDocumentoIdCliente", "valor": "CC" },
+        { "llave": "NumeroIdentificacionCliente", "valor": "1013599101" },
+        { "llave": "FechaexpedicionDocumento", "valor": "01-01-1900 00:01" },
+        { "llave": "FechaExpiracionDocumento", "valor": "01-01-1900 00:01" }
+      ]
+    },
+    "trace": { "ipAddr": "127.0.0.1", "userId": "SIMONS" }
+  }'</div>
+
+        <div class="separator"></div>
+
+        <!-- Servicio 4: Actualización de estado -->
+        <h3>12.4 Actualizar Estado (Bitácora Fuerza de Ventas)</h3>
+        <div class="info-box">
+            <strong>Endpoint:</strong> <code>POST /api/v1/fuerza-ventas/track/crear/bitacora/{id}</code><br>
+            <strong>Content-Type:</strong> application/json<br>
+            <strong>Nota:</strong> Actualiza el estado de un caso existente en la bitácora de seguimiento.
+        </div>
+
+        <table class="rules-table">
+            <thead>
+                <tr><th>Campo</th><th>Tipo</th><th>Ubicación</th><th>Descripción</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>id</strong></td><td>Long</td><td>Path</td><td>ID de la bitácora (caso)</td></tr>
+                <tr><td><strong>estado</strong></td><td>String</td><td>Body</td><td>Nuevo estado: Abierto, Devuelto, Estudio, Expedido, Rechazado, Soladic, Provisorio</td></tr>
+                <tr><td><strong>escritorio</strong></td><td>String</td><td>Body</td><td>Escritorio final de FileNet (ej: "EXPEDIDOS", "RADICADOR")</td></tr>
+                <tr><td><strong>fechaCambio</strong></td><td>Date (ISO 8601)</td><td>Body</td><td>Fecha en que ocurrió el cambio de estado</td></tr>
+                <tr><td><strong>fechaPosSol</strong></td><td>Date (ISO 8601)</td><td>Body</td><td>Fecha posible de solución (calculada por ANS). Puede ser null</td></tr>
+                <tr><td><strong>priorizado</strong></td><td>Boolean</td><td>Body</td><td>Si el caso está priorizado</td></tr>
+            </tbody>
+        </table>
+
+        <h4 style="margin-top:20px; color:var(--secondary);">Ejemplo cURL</h4>
+        <div class="diagram-box" style="background:#1e1e1e; color:#d4d4d4; font-family: 'Courier New', monospace; font-size:0.8rem; overflow-x:auto; white-space:pre; line-height:1.5;">curl -X POST "https://{host}/api/v1/fuerza-ventas/track/crear/bitacora/12345" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "estado": "Expedido",
+    "escritorio": "EXPEDIDOS",
+    "fechaCambio": "2026-05-31T15:30:00",
+    "fechaPosSol": "2026-06-02T10:00:00",
+    "priorizado": false
+  }'</div>
+
+        <div class="separator"></div>
+
+        <!-- Servicio 5: Listas -->
+        <h3>12.5 Consultar Listas Parametrizables</h3>
+        <div class="info-box">
+            <strong>Endpoint:</strong> <code>GET /documentos_archivos_filenet/api/v1/filenet/listas</code><br>
+            <strong>Autenticación:</strong> Header <code>x-api-key</code><br>
+            <strong>Nota:</strong> Retorna las listas de valores configuradas en FileNet (ramos, productos, escritorios, estados, etc.)
+        </div>
+
+        <table class="rules-table">
+            <thead>
+                <tr><th>Parámetro</th><th>Tipo</th><th>Requerido</th><th>Descripción</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>idLista</strong></td><td>String</td><td>Sí</td><td>Identificador de la lista a consultar</td></tr>
+                <tr><td>padre</td><td>String</td><td>No</td><td>Primera dependencia jerárquica</td></tr>
+                <tr><td>hijo</td><td>String</td><td>No</td><td>Segunda dependencia jerárquica</td></tr>
+                <tr><td>nieto</td><td>String</td><td>No</td><td>Tercera dependencia jerárquica</td></tr>
+                <tr><td>filtro</td><td>Integer</td><td>No</td><td>Filtro numérico adicional</td></tr>
+            </tbody>
+        </table>
+
+        <h4 style="margin-top:15px; color:var(--primary);">Catálogo de Listas Disponibles</h4>
+        <table class="rules-table">
+            <thead>
+                <tr><th>idLista</th><th>Descripción</th><th>Dependencia</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>0</td><td>Catálogo de todas las listas disponibles</td><td>—</td></tr>
+                <tr><td>1</td><td>Ramos</td><td>—</td></tr>
+                <tr><td>2</td><td>Productos</td><td>padre = código ramo</td></tr>
+                <tr><td>3</td><td>Subproductos</td><td>padre = ramo, hijo = producto</td></tr>
+                <tr><td>4</td><td>Tipos de movimiento de negocio</td><td>—</td></tr>
+                <tr><td>5</td><td>Tipos de control documental</td><td>—</td></tr>
+                <tr><td>6</td><td>Tipos de modificación</td><td>—</td></tr>
+                <tr><td>7</td><td>Tipos de reconsideración</td><td>—</td></tr>
+                <tr><td>8</td><td>Tipo error de títulos</td><td>—</td></tr>
+                <tr><td>9</td><td>Servicios capitalización</td><td>—</td></tr>
+                <tr><td>10</td><td>Tipo de actuación</td><td>—</td></tr>
+                <tr><td>11</td><td>Tipo de cliente</td><td>—</td></tr>
+                <tr><td>12</td><td>Tipo de documento</td><td>—</td></tr>
+                <tr><td>13</td><td>Localidad de radicación</td><td>—</td></tr>
+                <tr><td>14</td><td>Director comercial</td><td>padre = centro de costo</td></tr>
+                <tr><td>15</td><td>SI / NO</td><td>—</td></tr>
+                <tr><td>16</td><td>Tipo de excepción</td><td>—</td></tr>
+                <tr><td>17</td><td>Causas de devolución</td><td>—</td></tr>
+                <tr><td>18</td><td>Causas adicionales de devolución</td><td>—</td></tr>
+                <tr><td>19</td><td>Estados de negocio</td><td>—</td></tr>
+                <tr><td>20</td><td>Escritorios</td><td>—</td></tr>
+            </tbody>
+        </table>
+
+        <h4 style="margin-top:20px; color:var(--secondary);">Ejemplos cURL</h4>
+        <div class="diagram-box" style="background:#1e1e1e; color:#d4d4d4; font-family: 'Courier New', monospace; font-size:0.8rem; overflow-x:auto; white-space:pre; line-height:1.5;"># Todas las listas disponibles
+curl "https://{host}/documentos_archivos_filenet/api/v1/filenet/listas?idLista=0" \
+  -H "x-api-key: {api-key}"
+
+# Productos del ramo 2
+curl "https://{host}/documentos_archivos_filenet/api/v1/filenet/listas?idLista=2&padre=2" \
+  -H "x-api-key: {api-key}"
+
+# Subproductos con jerarquía completa (ramo 2, producto 124, subproducto 716)
+curl "https://{host}/documentos_archivos_filenet/api/v1/filenet/listas?idLista=3&padre=2&hijo=124&nieto=716" \
+  -H "x-api-key: {api-key}"
+
+# Con filtro numérico
+curl "https://{host}/documentos_archivos_filenet/api/v1/filenet/listas?idLista=3&padre=2&filtro=1" \
+  -H "x-api-key: {api-key}"</div>
+
+    </div>
+
+    <div class="separator"></div>
+
+    <!-- Footer -->
+    <div style="text-align:center; padding:30px 0; color:var(--gray); font-size:0.9rem;">
+        <p><strong>Documento generado:</strong> Junio 2026</p>
+        <p>Seguros Bolívar — Gestión Documental BPM — FileNet</p>
+        <p style="margin-top:8px; font-size:0.8rem;">Este documento describe el comportamiento actual del motor de reglas según los paquetes: PCK_TRANSACTION, PCK_FLUJOS, PCK_GENERIC, fn_obtener_escritorio, fnc_obtener_escritorio_marcas, fn_obtener_estado</p>
+    </div>
+</div>
+
+</body>
+</html>
