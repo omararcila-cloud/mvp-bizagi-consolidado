@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consolidado MVP Bizagi — Suscripción y Emisión</title>
+<style>
+:root{--bg:#0f172a;--surface:#1e293b;--card:#334155;--accent:#38bdf8;
+--accent2:#a78bfa;--accent3:#34d399;--accent4:#fb923c;--text:#e2e8f0;
+--muted:#94a3b8;--border:#475569;--success:#22c55e;--warn:#eab308;
+--danger:#ef4444}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);
+color:var(--text);line-height:1.6;padding:2rem}
+.container{max-width:1400px;margin:0 auto}
+h1{font-size:2rem;color:var(--accent);margin-bottom:.5rem}
+h2{font-size:1.5rem;color:var(--accent2);margin:2rem 0 1rem;
+border-bottom:2px solid var(--border);padding-bottom:.5rem}
+h3{font-size:1.1rem;color:var(--accent3);margin:1.5rem 0 .5rem}
+h4{font-size:0.95rem;margin:1rem 0 0.3rem}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.85rem}
+th{padding:8px;text-align:left;background:var(--card);color:var(--accent)}
+td{padding:6px 8px;border-bottom:1px solid var(--border)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1rem;margin:1rem 0;align-items:start}
+.card{background:var(--surface);padding:1.2rem;border-radius:8px}
+.card ul{padding-left:1.2rem;color:var(--text);font-size:0.9rem}
+details.collapse{background:var(--surface);border-radius:8px;margin:.5rem 0;overflow:hidden}
+details.collapse summary{padding:1rem 1.2rem;cursor:pointer;font-weight:bold;font-size:1rem;list-style:none;display:flex;align-items:center;gap:.5rem}
+details.collapse summary::-webkit-details-marker{display:none}
+details.collapse summary::before{content:'▶';font-size:0.7rem;transition:transform .2s}
+details.collapse[open] summary::before{transform:rotate(90deg)}
+details.collapse .dc{padding:0 1.2rem 1rem}
+details.collapse ul{padding-left:1.2rem;color:var(--text);font-size:0.9rem}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>📋 Consolidado MVP Bizagi — Suscripción y Emisión</h1>
+<p style="color:var(--muted)">Generado: 2026-06-04 | Fuentes: 16 sesiones (Abr 20 – Jun 3) + Plan de trabajo + Diagramas</p>
+<p style="color:var(--muted)">Última actualización basada en sesiones cargadas en docs/Sesiones-Bizagi/</p>
+</header>
+
+<nav style="background:var(--surface);padding:1rem;border-radius:8px;margin:1.5rem 0">
+<strong style="color:var(--accent)">Navegación:</strong>
+<a href="#arquitectura" style="color:var(--accent3);margin:0 .5rem">1. Arquitectura</a>
+<a href="#resumen" style="color:var(--accent3);margin:0 .5rem">2. Resumen</a>
+<a href="#parking" style="color:var(--accent3);margin:0 .5rem">3. Parking Lot</a>
+<a href="#modelo" style="color:var(--accent3);margin:0 .5rem">4. Datos</a>
+<a href="#integraciones" style="color:var(--accent3);margin:0 .5rem">5. Integraciones</a>
+<a href="#plan" style="color:var(--accent3);margin:0 .5rem">6. Plan</a>
+<a href="#gantt" style="color:var(--accent3);margin:0 .5rem">7. Gantt</a>
+<a href="#diagramas" style="color:var(--accent3);margin:0 .5rem">8. Diagramas</a>
+<a href="#filenet" style="color:var(--accent3);margin:0 .5rem">9. Filenet</a>
+</nav>
+
+<!-- ============ SECCIÓN 1: ARQUITECTURA ============ -->
+<section id="arquitectura">
+<h2>1. Diagrama de Arquitectura</h2>
+<p>Arquitectura objetivo para la migración de Filenet a Bizagi. Ejecución desde 4 Jun 2026.</p>
+<div style="background:var(--surface);padding:1.5rem;border-radius:8px;margin:1rem 0;overflow-x:auto">
+<pre style="font-family:monospace;font-size:0.82rem;color:var(--text)">
+┌─────────────────────────────────────────────────────────────────┐
+│                     CANALES DE ENTRADA                            │
+├──────────────────┬──────────────────┬───────────────────────────┤
+│ Portal Interm.   │ Gestor Correos   │ Bizagi (directo)          │
+└────────┬─────────┴────────┬─────────┴─────────────┬─────────────┘
+         │                  │                       │
+         ▼                  ▼                       ▼
+┌─────────────────────────────────────────────────────────────────┐
+│           API ÚNICA DE CREACIÓN DE CASOS                         │
+└─────────────────────────────────────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│               CAPA DE VALIDACIÓN Y REQUISITOS                    │
+├────────────────┬────────────────┬────────────────┬──────────────┤
+│ Carpeta Única  │ Tronador       │ SARLAF/Marcas  │ Saghi/FCA    │
+│ • Movimientos  │ • Ramos        │ • Validación   │ • Claves     │
+│ • Requisitos   │ • Productos    │   clientes     │              │
+│ • Taxonomía    │ • Subproductos │                │              │
+│ • URL prefirm. │ • Réplica día  │                │              │
+└────────────────┴────────────────┴────────────────┴──────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│          GESTOR DE PROCESOS — BIZAGI (Orquestador)               │
+├─────────────────────────────────────────────────────────────────┤
+│ • Crea caso (consecutivo 4M+)     • Motor decisión (reglas)     │
+│ • Asigna escritorio/analista      • Gestión estados             │
+│ • Automatización &gt;$800M          • URLs docs en O'Leary        │
+│ • Comunicación bidireccional      • Trazabilidad completa       │
+│ • MVP: Recepción → Creación → Asignación                        │
+└─────────────────────────────────────────────────────────────────┘
+         │                        │
+         ▼                        ▼
+┌────────────────────┐  ┌────────────────────────────────────────┐
+│ GESTOR DOCUMENTAL  │  │ SALIDAS                                 │
+│ O'LEARY            │  ├────────────────────────────────────────┤
+│ • Solo almacena    │  │ • Póliza emitida                       │
+│ • Taxonomía CUC    │  │ • Notificaciones intermediario         │
+│ • Consulta x caso  │  │ • Tracking estados Portal              │
+│ • Reemplaza Filenet│  │ • Devoluciones al canal                │
+└────────────────────┘  └────────────────────────────────────────┘
+</pre>
+</div>
+</section>
+
+<!-- ============ SECCIÓN 2: RESUMEN EJECUTIVO ============ -->
+<section id="resumen">
+<h2>2. Resumen Ejecutivo — Decisiones y Acuerdos</h2>
+<p>Consolidado de 16 sesiones (Abr 20 – May 28). Agrupado por clusters temáticos.</p>
+
+<div class="grid">
+
+<details class="collapse" style="border-left:4px solid var(--accent)"><summary style="color:var(--accent)">🏛️ Orquestación y Flujo</summary><div class="dc">
+<ul>
+<li>✅ Bizagi = orquestador central (reemplaza N8N + Filenet)</li>
+<li>✅ Consecutivos desde 4M+ (Filenet en 2M)</li>
+<li>✅ BPMN 2.0 al 86.6% — flujo conceptual listo</li>
+<li>✅ Reglas: copiar y ajustar de Filenet (no crear desde cero)</li>
+<li>✅ Entregas por paquetes de valor funcional</li>
+<li>✅ Automatización: &gt;$800M → "En Estudio"</li>
+<li>✅ Estados mismos nombres (no romper integraciones)</li>
+<li>✅ Arquitectura agnóstica — cualquier canal</li>
+<li>✅ API única de creación de casos para todos los canales</li>
+<li>✅ MVP: Recepción → Creación caso → Asignación</li>
+<li>✅ Cronograma en semanas — ejecución desde 4 Jun</li>
+<li>✅ <strong>MVP1 = 48 actividades</strong> (de 61 totales, 13 excluidas)</li>
+<li>✅ <strong>Prototipado</strong> como estrategia central para validar reglas</li>
+<li>✅ <strong>Reuniones recurrentes</strong> miércoles 2:30 PM (se reprograman martes AM desde 17 Jun)</li>
+<li>✅ <strong>Motor N8N→Bizagi confirmado por arquitecto</strong> — Bizagi llama al motor para OCR + análisis</li>
+<li>✅ <strong>Integración motor = líder técnico</strong> (Tecnología, no equipo operativo)</li>
+<li>✅ <strong>Equipo enfocado en: bots emisión + API consecutivo gestor correos</strong></li>
+<li>⏳ Modelar flujo técnico — Iván + Diego</li>
+<li>⏳ Emparejar reglas Filenet↔Bizagi — Omar + Óscar</li>
+<li>⏳ Reglas de negocio (Weimar) — pendiente entrega</li>
+<li>⏳ Juan Sebastián (GIMA): presentará reglas productos + lógica validación</li>
+<li>⏳ Validar arquitectura Bizagi con Gustavo (diagramas, flujo técnico, Jira)</li>
+</ul></div></details><details class="collapse" style="border-left:4px solid var(--accent3)"><summary style="color:var(--accent3)">📄 Gestión Documental</summary><div class="dc">
+<ul>
+<li>✅ O'Leary reemplaza Filenet (solo almacena)</li>
+<li>✅ CUC lidera taxonomía — indica qué docs se requieren</li>
+<li>✅ CUC entrega URL prefirmada con taxonomía</li>
+<li>✅ Taxonomía unificada todos los canales</li>
+<li>✅ Bizagi = canal central consulta documental</li>
+<li>✅ Comunicación bidireccional O'Leary↔Bizagi</li>
+<li>✅ Dato prima sobre documento (solo obligatorios legales)</li>
+<li>✅ Todos los docs pasan por CUC independiente del canal</li>
+<li>✅ <strong>Servicio de Marcas excluido del MVP1</strong> (no está listo)</li>
+<li>✅ <strong>Mocks para APIs pendientes</strong> — avanzar sin esperar CUC final</li>
+<li>⏳ API CUC transitoria — si no está, fuente actual</li>
+<li>⏳ Definir acceso técnico O'Leary — Gustavo Suárez (sesión agendada)</li>
+<li>⏳ Visibilidad O'Leary (Pilar) — confirmar estrategia</li>
+<li>⏳ Componente antivirus — validar con arquitectura</li>
+</ul></div></details><details class="collapse" style="border-left:4px solid var(--accent4)"><summary style="color:var(--accent4)">📧 Gestor de Correos</summary><div class="dc">
+<ul>
+<li>✅ RPA SmartBot muere — API directa a Bizagi</li>
+<li>✅ MVP = 60% suscripción — 40% servicios fase 2</li>
+<li>✅ OCR + IA funciona — valida, interpreta, extrae</li>
+<li>✅ GCS almacena adjuntos (ID + Link)</li>
+<li>✅ Consulta Tronador operativa</li>
+<li>✅ Front nuevo reemplaza Sheets</li>
+<li>✅ Gestor correos NO se integra directo en MVP — solo solicitudes entran al flujo</li>
+<li>⏳ API Correos→Bizagi — ~1 semana con diccionario</li>
+</ul></div></details><details class="collapse" style="border-left:4px solid var(--accent2)"><summary style="color:var(--accent2)">🖥️ Portal de Intermediarios</summary><div class="dc">
+<ul>
+<li>✅ MVP prioriza Portal como canal #1</li>
+<li>✅ Su modelo de datos = base para otros canales</li>
+<li>✅ 6 funcionalidades Filenet se desagregan</li>
+<li>✅ Tracking simplificado (tipo seguimiento pedido)</li>
+<li>✅ Consulta consecutivos: &lt;4M→Filenet, ≥4M→Bizagi</li>
+<li>✅ Caché productos (sincronización diaria)</li>
+<li>✅ SARLAF se mantiene</li>
+<li>✅ Límite 5MB/doc + formatos restringidos</li>
+<li>⏳ Diccionario API Bizagi — necesario para crear caso</li>
+<li>⏳ Validar integraciones con PO del portal</li>
+</ul></div></details><details class="collapse" style="border-left:4px solid var(--warn)"><summary style="color:var(--warn)">🔌 Integraciones</summary><div class="dc">
+<ul>
+<li>✅ Tronador = fuente ramos/productos (réplica diaria)</li>
+<li>✅ CUC = fuente movimientos/requisitos</li>
+<li>✅ 21 integraciones: 8 existentes + 9 por construir/ajustar + 4 faltantes</li>
+<li>✅ <strong>API CUC para portal disponible esta semana</strong> (Jun 1)</li>
+<li>✅ <strong>3 APIs transversales Filenet ya extraídas</strong></li>
+<li>✅ Filenet fuera de servicio: Abr 2027</li>
+<li>⏳ Mapeo detallado bidireccional — Leonel + equipo</li>
+<li>⏳ Alinear APIs con Juan Pablo</li>
+<li>⏳ Listas paramétricas: ¿Tronador o CUC?</li>
+<li>⏳ Parametrización manual en Bizagi si no hay API</li>
+<li>⏳ Cruzar parametrización Filenet vs modelo datos (Omar+Víctor+Óscar)</li>
+</ul></div></details><details class="collapse" style="border-left:4px solid var(--danger)"><summary style="color:var(--danger)">🏗️ Infraestructura y Datos</summary><div class="dc">
+<ul>
+<li>✅ Entornos desarrollo confirmados — falta validar usuarios</li>
+<li>✅ Modelo datos transversal — un solo modelo todos los ramos</li>
+<li>✅ Arquitectura construye modelo (no inteligencia operacional)</li>
+<li>✅ Formularios se unifican transversalmente (todos los ramos)</li>
+<li>✅ <strong>2 licencias Bizagi activas</strong> (David Tapiero + Juan) para pruebas</li>
+<li>✅ <strong>3 flujos principales documentados</strong>: suscripción, confidencial, terceros (18 escritorios)</li>
+<li>⏳ Validar usuarios entorno — John + Dani López</li>
+<li>⏳ Extraer parametrización actual Filenet</li>
+<li>⏳ Revisar infraestructura almacenamiento Bizagi</li>
+<li>⏳ Revisar contratos servicio existentes</li>
+<li>⏳ Mapear 11 sistemas origen</li>
+<li>⏳ Claves Director Comercial — sin repositorio oficial</li>
+<li>⏳ Óscar: 3 semanas (60%) para relaciones datos</li>
+<li>⏳ Revisión arquitectura O'Leary — Gustavo Suárez (sesión agendada)</li>
+<li>⏳ Investigar "escritorio final" en tablas BD — Juan Sebastián</li>
+</ul></div></details><details class="collapse" style="border-left:4px solid #e879f9"><summary style="color:#e879f9">📣 Gestión y Gobierno</summary><div class="dc">
+<ul>
+<li>✅ Paquetes de valor definidos como estrategia</li>
+<li>✅ % avance eliminado — se mide por duración estimada</li>
+<li>✅ <strong>Gobernanza claves comerciales: Feb 2027</strong> (fuera del MVP)</li>
+<li>✅ <strong>Cronograma se extiende hacia Oct 2026</strong> (según estimaciones)</li>
+<li>⏳ Plan comunicación + gestión del cambio</li>
+<li>⏳ Solicitud accesos + certificación pruebas</li>
+<li>⏳ Revisar escritorio cartera (Milena)</li>
+<li>⏳ Liliana: consultar fuentes comerciales (claves)</li>
+<li>⏳ Parametrización reglas = equipo Procesos (reglas codificadas → parametrizables)</li>
+<li>📅 Filenet fuera servicio: Abr 2027</li>
+<li>📅 MVP suscripción: ejecución desde 4 Jun 2026</li>
+<li>📅 Migración 40% servicios: Oct-Dic 2026</li>
+</ul></div></details></div>
+
+<h3>Equipo Principal</h3>
+<table>
+<thead><tr><th>Team</th><th>Recurso</th><th>Rol</th><th>%</th><th>Funciones</th></tr></thead>
+<tbody style="color:var(--text)">
+<tr><td>Inteligencia Operacional</td><td>David Tapiero</td><td>Líder</td><td>10%</td><td>Liderar definiciones Reglas de negocio + Estructura datos Filenet</td></tr>
+<tr><td>Inteligencia Operacional</td><td>Oscar Aponte</td><td></td><td>60%</td><td>Reglas de negocio + Estructura datos Filenet</td></tr>
+<tr><td>Evolución Operacional</td><td>Julio Torres</td><td>Líder</td><td>10%</td><td>Liderar definiciones Formularios + Datos operativos</td></tr>
+<tr><td>Evolución Operacional</td><td>Victor Jiménez</td><td></td><td>50%</td><td>Formularios + Datos operativos + Reglas de negocio</td></tr>
+<tr><td>Procesos</td><td>Daniel López</td><td>Líder</td><td>10%</td><td>Liderar definiciones proceso Bizagi</td></tr>
+<tr><td>Procesos</td><td>Alejandro Botia</td><td></td><td>100%</td><td>Representación de procesos + Modelo de datos</td></tr>
+<tr><td>Procesos</td><td>Luisa Hernández</td><td></td><td>20%</td><td>Representación de procesos + Modelo de datos</td></tr>
+<tr><td>Procesos</td><td>Iván Arismendi</td><td>Bk</td><td>20%</td><td>Representación de procesos + Modelo de datos</td></tr>
+<tr><td>Tecnología</td><td>Carlos Daza</td><td>Arquitecto</td><td>30%</td><td>Arquitectura + Integraciones</td></tr>
+<tr><td>Tecnología</td><td>Gustavo Suárez</td><td>Arquitecto</td><td>10%</td><td>Arquitectura + Integraciones O'Leary</td></tr>
+<tr><td>Tecnología</td><td>Leonel Pedrozo</td><td>Líder Técnico</td><td>10%</td><td>Integraciones + APIs</td></tr>
+<tr><td>Tecnología</td><td>John Caicedo</td><td>POT</td><td>5%</td><td>Gobierno del proyecto</td></tr>
+<tr><td>Tecnología</td><td>Omar Arcila</td><td>PO(e)</td><td>20%</td><td>Orquestación migración Filenet→Bizagi</td></tr>
+<tr><td>Tecnología</td><td>Juan Latorre</td><td>PO</td><td>5%</td><td>Orquestación Bizagi→O'Leary→CUC</td></tr>
+<tr><td>Tecnología</td><td>Maye López</td><td>PO</td><td>5%</td><td>Orquestación Gestor Correos→Bizagi</td></tr>
+<tr><td>GIMA / Filenet</td><td>Juan Sebastián Jiménez</td><td>Apoyo</td><td>—</td><td>Documentación reglas negocio + flujos Filenet</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- ============ SECCIÓN 3: PARKING LOT ============ -->
+<section id="parking">
+<h2>3. 🅿️ Parking Lot — Fuera del MVP</h2>
+<p>Temas que <strong>no entran en el MVP</strong> pero requieren definición posterior.</p>
+<div class="grid">
+<details class="collapse" style="border-left:4px solid #e879f9"><summary style="color:#e879f9">📧 40% Servicios (Correo)</summary><div class="dc"><ul>
+<li>Certificaciones, cobros, facturaciones, reenvíos</li>
+<li>Migración a Bizagi: Oct-Dic 2026</li>
+<li>Integración front nuevo gestor correos</li>
+</ul></div></details><details class="collapse" style="border-left:4px solid #e879f9"><summary style="color:#e879f9">📄 Docs Avanzados</summary><div class="dc"><ul>
+<li>OCR + segmentación documental (fase 2 CUC)</li>
+<li>Validación pertinencia (doc cargado = solicitado)</li>
+<li>Migración silenciosa docs históricos Filenet→O'Leary</li>
+</ul></div></details><details class="collapse" style="border-left:4px solid #e879f9"><summary style="color:#e879f9">🏢 Claves Comerciales</summary><div class="dc"><ul>
+<li>Definir fuente oficial (Liliana consultará líderes canales)</li>
+<li>Módulo en Bizagi para actualización</li>
+<li>Política centralización</li>
+<li><strong>Gobernanza oficial postergada a Feb 2027</strong> — fuente actual como solución temporal MVP</li>
+</ul></div></details><details class="collapse" style="border-left:4px solid #e879f9"><summary style="color:#e879f9">🔄 Otros Canales</summary><div class="dc"><ul>
+<li>Simón Ventas: refactorizar flujo lotes</li>
+<li>Autos Colectivos: flujo independiente, fase posterior</li>
+<li>Tienda Seguros, Masivos Digitales, Recobros</li>
+<li>Sistemas externos (Adres) descartados del MVP</li>
+<li><strong>Servicio de Marcas:</strong> excluido MVP1, se mantiene sin cambios en portal</li>
+<li><strong>Flujo decenal en Bizagi:</strong> exploración de Procesos, sin confirmar</li>
+</ul></div></details><details class="collapse" style="border-left:4px solid #e879f9"><summary style="color:#e879f9">📊 Históricos</summary><div class="dc"><ul>
+<li>¿Bizagi consulta consecutivos Filenet?</li>
+<li>Estrategia consulta por rango numérico</li>
+<li>Cuánta info histórica migrar</li>
+</ul></div></details><details class="collapse" style="border-left:4px solid #e879f9"><summary style="color:#e879f9">🤖 Automatización Avanzada</summary><div class="dc"><ul>
+<li>Agente IA Bizagi (Ada) para consulta casos</li>
+<li>Bots emisión automática dentro de Bizagi</li>
+<li>Componente comunicación transversal (WhatsApp, tel, correo)</li>
+<li>Actualizaciones directas en Tronador (beneficiarios) — excede alcance</li>
+</ul></div></details><details class="collapse" style="border-left:4px solid #e879f9"><summary style="color:#e879f9">👥 Roles Avanzados</summary><div class="dc"><ul>
+<li>Acceso directores comerciales a cotizadores</li>
+<li>Autogestión usuarios por representante legal</li>
+<li>Campos confidenciales en Bizagi</li>
+<li>Múltiples movimientos en una radicación</li>
+</ul></div></details><details class="collapse" style="border-left:4px solid #e879f9"><summary style="color:#e879f9">📐 Ramos Adicionales</summary><div class="dc"><ul>
+<li>Salud: levantar campos específicos</li>
+<li>Autos: completar modelo específico</li>
+<li>35-40 buzones adicionales (cumplimiento, corporativos)</li>
+</ul></div></details></div>
+</section>
+
+<!-- ============ SECCIÓN 4: MODELO DE DATOS ============ -->
+<section id="modelo">
+<h2>4. Modelo de Datos</h2>
+<p>Estructura transversal. Arquitectura construye el modelo (impacto transversal). Base: Portal Intermediarios.</p>
+<h3>4.1 Campos Transversales</h3>
+<table>
+<thead><tr><th>Campo</th><th>Fuente</th><th>Descripción</th></tr></thead>
+<tbody style="color:var(--text)">
+<tr><td>Consecutivo Bizagi</td><td>Bizagi (auto, 4M+)</td><td>Número único del caso</td></tr>
+<tr><td>Número FB</td><td>Portal Intermediarios</td><td>Tracking externo intermediario</td></tr>
+<tr><td>Ramo</td><td>Tronador (réplica)</td><td>Código ramo seguro</td></tr>
+<tr><td>Producto</td><td>Tronador (réplica)</td><td>Código producto</td></tr>
+<tr><td>Subproducto</td><td>Tronador (réplica)</td><td>Código subproducto</td></tr>
+<tr><td>Tipo Movimiento</td><td>Carpeta Única</td><td>Nuevo negocio, modificación, etc.</td></tr>
+<tr><td>Subtipo Movimiento</td><td>Carpeta Única</td><td>Aumento, disminución, etc.</td></tr>
+<tr><td>Clave Intermediario</td><td>Saghi / FCA</td><td>ID intermediario</td></tr>
+<tr><td>Director Comercial</td><td>¿? (pendiente)</td><td>Jerarquía comercial</td></tr>
+<tr><td>Tomador (Cédula)</td><td>Base terceros</td><td>ID tomador póliza</td></tr>
+<tr><td>Asegurado</td><td>Base terceros</td><td>ID asegurado (si difiere)</td></tr>
+<tr><td>NRO Póliza Madre</td><td>Tronador</td><td>Póliza base para modificaciones</td></tr>
+<tr><td>Correo Notificación</td><td>Portal / Correo</td><td>Email notificaciones estado</td></tr>
+<tr><td>Canal Entrada</td><td>Sistema</td><td>Portal, Correo, Simón, Tienda...</td></tr>
+<tr><td>Fecha Radicación</td><td>Sistema</td><td>Timestamp creación</td></tr>
+<tr><td>Marcas de Tiempo</td><td>Bizagi</td><td>Trazabilidad cada paso</td></tr>
+</tbody>
+</table>
+<h3>4.2 Estados del Caso</h3>
+<div class="grid">
+<div class="card"><ul><li>Radicado</li><li>En Estudio</li><li>Pendiente</li><li>Devuelto</li><li>Provisorio</li><li>Rechazado</li><li>Finalizado/Emitido</li></ul>
+<p style="color:var(--muted);font-size:0.8rem">Mismos nombres de Filenet (no romper integraciones)</p></div>
+<div class="card"><h3 style="color:var(--accent4)">Estrategia Datos</h3><ul>
+<li>Réplica diaria Tronador → Lago</li>
+<li>Caché portal (sincronización diaria)</li>
+<li>Base espejo clientes (actualización diaria)</li>
+<li>Campos coincidentes en tabla principal</li>
+<li>Campos por ramo en tablas satélite (unidas por NRO póliza)</li>
+<li>Óscar: 3 semanas (60%) para relaciones y llaves</li>
+</ul></div></details></div>
+</section>
+
+<!-- ============ SECCIÓN 5: INTEGRACIONES ============ -->
+<section id="integraciones">
+<h2>5. Mapa de Integraciones</h2>
+<p>21 conexiones bidireccionales identificadas. Fuente: <code>Integraciones Bizagi.txt</code></p>
+<table>
+<thead><tr><th>#</th><th>Origen</th><th>Destino</th><th>Propósito</th><th>Estado</th></tr></thead>
+<tbody style="color:var(--text)">
+<tr><td>1</td><td>Portal/Correo</td><td>CUC</td><td>Tipos movimiento + requisitos documentales</td><td style="color:var(--warn)">⏳ Esperando API</td></tr>
+<tr><td>2</td><td>Portal/Correo</td><td>Tronador</td><td>Listas ramos, productos, subproductos</td><td style="color:var(--warn)">⏳ Esperando def. CUC</td></tr>
+<tr><td>3</td><td>Portal</td><td>Saghi/FCA</td><td>Claves habilitadas intermediario</td><td style="color:var(--success)">✅ Existe</td></tr>
+<tr><td>4</td><td>Canal</td><td>Bizagi</td><td>Crear caso + consecutivo</td><td style="color:var(--warn)">⏳ Necesita diccionario</td></tr>
+<tr><td>5</td><td>CUC</td><td>O'Leary</td><td>Enviar docs con taxonomía</td><td style="color:var(--warn)">⏳ Esperando def. CUC</td></tr>
+<tr><td>6</td><td>Bizagi</td><td>O'Leary</td><td>Consultar docs por caso (URLs)</td><td style="color:var(--success)">✅ API existe</td></tr>
+<tr><td>7</td><td>Bizagi</td><td>Canal</td><td>Notificar estado + devoluciones</td><td style="color:var(--danger)">❌ Por diseñar</td></tr>
+<tr><td>8</td><td>Portal</td><td>SARLAF</td><td>Validar cliente</td><td style="color:var(--success)">✅ Existe</td></tr>
+<tr><td>9</td><td>Portal</td><td>Base Terceros</td><td>Buscar clientes por clave</td><td style="color:var(--success)">✅ Existe</td></tr>
+<tr><td>10</td><td>Bizagi</td><td>Motor Decisión</td><td>Reglas asignación</td><td style="color:var(--warn)">⏳ Migrar N8N→Bizagi</td></tr>
+<tr><td>11</td><td>Gestor Correos</td><td>GCS</td><td>Almacenar adjuntos</td><td style="color:var(--success)">✅ Funciona</td></tr>
+<tr><td>12</td><td>Gestor Correos</td><td>Tronador</td><td>NRO póliza + Dir. Comercial</td><td style="color:var(--success)">✅ Funciona</td></tr>
+<tr><td>13</td><td>Gestor Correos</td><td>Bizagi</td><td>Crear caso (reemplaza RPA)</td><td style="color:var(--warn)">⏳ ~1 sem con diccionario</td></tr>
+<tr><td>14</td><td>Portal</td><td>Bizagi</td><td>Consultar estado caso</td><td style="color:var(--warn)">⏳ Necesita API</td></tr>
+<tr><td>15</td><td>Canal</td><td>Antivirus</td><td>Escanear docs</td><td style="color:var(--danger)">❌ Pendiente responsable</td></tr>
+<tr><td>16</td><td>Portal</td><td>Listas Param.</td><td>Claves por Director</td><td style="color:var(--danger)">❌ Sin fuente oficial</td></tr>
+<tr><td>17</td><td>Bizagi</td><td>SARLAF</td><td>Validar cliente</td><td style="color:var(--success)">✅ Existe</td></tr>
+<tr><td>18</td><td>Bizagi</td><td>CUC</td><td>Tipos movimiento + requisitos</td><td style="color:var(--warn)">⏳ Esperando API</td></tr>
+<tr><td>19</td><td>Bizagi</td><td>Tronador</td><td>Listas ramos/productos</td><td style="color:var(--warn)">⏳ Esperando def. CUC</td></tr>
+<tr><td>20</td><td>Bizagi</td><td>Listas Param.</td><td>Claves por Director</td><td style="color:var(--danger)">❌ Sin fuente oficial</td></tr>
+<tr><td>21</td><td>Bizagi</td><td>Saghi</td><td>Claves habilitadas</td><td style="color:var(--success)">✅ Existe para portal</td></tr>
+</tbody>
+</table>
+<div style="display:flex;gap:2rem;margin:1rem 0;flex-wrap:wrap">
+<span style="color:var(--success)">✅ Existentes: 8</span>
+<span style="color:var(--warn)">⏳ En progreso: 9</span>
+<span style="color:var(--danger)">❌ Por diseñar: 4</span>
+</div>
+</section>
+
+<!-- ============ SECCIÓN 6: PLAN DE TRABAJO ============ -->
+<!-- ============ SECCIÓN 6: PLAN DE TRABAJO ============ -->
+<section id="plan">
+<h2>6. Plan de Trabajo MVP</h2>
+<p>62 tareas en 10 frentes. <strong>48 necesarias para MVP1</strong> (13 excluidas). Fuente: Plan de Trabajo final.</p>
+<table>
+<thead><tr><th>Frente</th><th>ID</th><th>Tarea</th><th>Estado</th><th>Dur.</th><th>Dep.</th><th>Responsable</th></tr></thead>
+<tbody style="color:var(--text)">
+<tr style="background:var(--surface)"><td rowspan="5"><strong>Datos</strong></td><td>1</td><td>Estructurar modelo datos general</td><td style="color:var(--success)">✅</td><td>—</td><td>—</td><td>Int. Operacional</td></tr>
+<tr><td>2</td><td>Construir relaciones datos (llaves)</td><td style="color:var(--danger)">⬜</td><td>3 sem</td><td>47,48</td><td>Int. Operacional</td></tr>
+<tr><td>3</td><td>Consolidar tablas maestras</td><td style="color:var(--danger)">⬜</td><td>2 sem</td><td>47,48</td><td>Int. Operacional</td></tr>
+<tr><td>4</td><td>Modelos datos específicos por ramo</td><td style="color:var(--warn)">🔄</td><td>1 sem</td><td>1</td><td>Int. Operacional</td></tr>
+<tr><td>5</td><td>Consolidación modelo final</td><td style="color:var(--danger)">⬜</td><td>4 sem</td><td>61</td><td>Int. Operacional</td></tr>
+<tr style="background:var(--surface)"><td rowspan="5"><strong>Formularios</strong></td><td>6</td><td>Entendimiento de proceso</td><td style="color:var(--success)">✅</td><td>—</td><td>—</td><td>Evol. Operacional</td></tr>
+<tr><td>7</td><td>Estructurar relación campos</td><td style="color:var(--warn)">🔄</td><td>1 sem</td><td>6</td><td>Evol. Operacional</td></tr>
+<tr><td>8</td><td>Definir experiencia actores</td><td style="color:var(--danger)">⬜</td><td>3 sem</td><td>7</td><td>Evol. Operacional</td></tr>
+<tr><td>9</td><td>Mockup diseño transversal</td><td style="color:var(--danger)">⬜</td><td>4 sem</td><td>8</td><td>Evol. Operacional</td></tr>
+<tr><td>10</td><td>Experiencia funcional Bizagi (IA)</td><td style="color:var(--danger)">⬜</td><td>3 sem</td><td>6-9</td><td>Evol. Operacional</td></tr>
+<tr style="background:var(--surface)"><td rowspan="6"><strong>Integraciones</strong></td><td>11</td><td>Documentar listado integraciones</td><td style="color:var(--success)">✅</td><td>—</td><td>—</td><td>Tecnología</td></tr>
+<tr><td>12</td><td>Entender actuales</td><td style="color:var(--warn)">🔄</td><td>—</td><td>11</td><td>Tecnología</td></tr>
+<tr><td>13</td><td>Definir futuras</td><td style="color:var(--warn)">🔄</td><td>—</td><td>12</td><td>Tecnología</td></tr>
+<tr><td>14</td><td>Diseñar integraciones</td><td style="color:var(--danger)">⬜</td><td>—</td><td>11,12</td><td>Tecnología</td></tr>
+<tr><td>15</td><td>Desarrollar integraciones</td><td style="color:var(--danger)">⬜</td><td>—</td><td>14</td><td>Tecnología</td></tr>
+<tr><td>16</td><td>Implementar integraciones</td><td style="color:var(--danger)">⬜</td><td>—</td><td>15</td><td>Tecnología</td></tr>
+<tr style="background:var(--surface)"><td rowspan="3"><strong>Flujos</strong></td><td>17</td><td>Flujo end-to-end (Nivel 3)</td><td style="color:var(--success)">✅</td><td>—</td><td>—</td><td>Procesos</td></tr>
+<tr><td>18</td><td>Flujo detallado conceptual</td><td style="color:var(--warn)">🔄</td><td>2 sem</td><td>—</td><td>Procesos/Operaciones</td></tr>
+<tr><td>19</td><td>Flujo técnico (arquitectura)</td><td style="color:var(--danger)">⬜</td><td>1 sem</td><td>11..18</td><td>Tecnología</td></tr>
+<tr style="background:var(--surface)"><td rowspan="2"><strong>Conceptual</strong></td><td>20</td><td>Diseño flujo automatización Bizagi</td><td style="color:var(--danger)">⬜</td><td><strong>6 sem</strong></td><td>1..19</td><td>Todos</td></tr>
+<tr><td>21</td><td>Implementación flujo funcional</td><td style="color:var(--warn)">🔄</td><td><strong>6 sem</strong></td><td>20</td><td>Todos</td></tr>
+<tr style="background:var(--surface)"><td rowspan="6"><strong>Reglas Proceso</strong></td><td>22</td><td>Entendimiento reglas actuales</td><td style="color:var(--warn)">🔄</td><td>1 sem</td><td>20</td><td>Int. Operacional</td></tr>
+<tr><td>23</td><td>Estructurar</td><td style="color:var(--warn)">🔄</td><td>1 sem</td><td>22</td><td>Int. Operacional</td></tr>
+<tr><td>24</td><td>Definir reglas</td><td style="color:var(--warn)">🔄</td><td>1 sem</td><td>22,23</td><td>Int. Operacional</td></tr>
+<tr><td>25</td><td>Consolidar torres motor</td><td style="color:var(--success)">✅</td><td>—</td><td>—</td><td>Int. Operacional</td></tr>
+<tr><td>26</td><td>Consolidar torres Filenet</td><td style="color:var(--danger)">⬜</td><td>1 sem</td><td>47</td><td>Int. Operacional</td></tr>
+<tr><td>27</td><td>Implementar reglas Bizagi</td><td style="color:var(--danger)">⬜</td><td>2 sem</td><td>25,26</td><td>Procesos/Int.Op</td></tr>
+<tr style="background:var(--surface)"><td rowspan="6"><strong>Reglas Asignación</strong></td><td>28</td><td>Entendimiento</td><td style="color:var(--danger)">⬜</td><td>1 sem</td><td>20</td><td>Int. Operacional</td></tr>
+<tr><td>29</td><td>Estructurar</td><td style="color:var(--danger)">⬜</td><td>1 sem</td><td>22..27</td><td>Int. Operacional</td></tr>
+<tr><td>30</td><td>Definir reglas</td><td style="color:var(--danger)">⬜</td><td>1 sem</td><td>28,29</td><td>Int. Operacional</td></tr>
+<tr><td>31</td><td>Consolidar reglas motor+Filenet</td><td style="color:var(--danger)">⬜</td><td>1 sem</td><td>47</td><td>Int. Operacional</td></tr>
+<tr><td>32</td><td>Parametrizar en Bizagi</td><td style="color:var(--danger)">⬜</td><td>1 sem</td><td>28..31</td><td>Int. Operacional</td></tr>
+<tr><td>33</td><td>Implementar en Bizagi</td><td style="color:var(--danger)">⬜</td><td>1 sem</td><td>32</td><td>Int. Operacional</td></tr>
+<tr style="background:var(--surface)"><td rowspan="6"><strong>Reglas Motor</strong></td><td>34</td><td>Entendimiento</td><td style="color:var(--success)">✅</td><td>—</td><td>—</td><td>Int. Operacional</td></tr>
+<tr><td>35</td><td>Estructurar</td><td style="color:var(--success)">✅</td><td>—</td><td>—</td><td>Int. Operacional</td></tr>
+<tr><td>36</td><td>Definir reglas</td><td style="color:var(--success)">✅</td><td>—</td><td>—</td><td>Int. Operacional</td></tr>
+<tr><td>37</td><td>Consolidar reglas motor+Filenet</td><td style="color:var(--danger)">⬜</td><td>1 sem</td><td>47</td><td>Int. Operacional</td></tr>
+<tr><td>38</td><td>Conexión motor decisión a Bizagi</td><td style="color:var(--danger)">⬜</td><td>2 sem</td><td>34..37</td><td>Tecnología</td></tr>
+<tr><td>39</td><td>Implementar reglas motor en Bizagi</td><td style="color:var(--danger)">⬜</td><td>2 sem</td><td>38</td><td>Int. Operacional</td></tr>
+<tr style="background:var(--surface)"><td rowspan="5"><strong>Roles</strong></td><td>40</td><td>Definir roles por actor</td><td style="color:var(--danger)">⬜</td><td>2 sem</td><td>18</td><td>Procesos</td></tr>
+<tr><td>41</td><td>Definir roles por área</td><td style="color:var(--danger)">⬜</td><td>2 sem</td><td>18</td><td>Procesos</td></tr>
+<tr><td>42</td><td>Relacionar por cargos</td><td style="color:var(--danger)">⬜</td><td>2 sem</td><td>18</td><td>Procesos</td></tr>
+<tr><td>43</td><td>Solicitar accesos</td><td style="color:var(--danger)">⬜</td><td>4 sem</td><td>40-42</td><td>Tecnología</td></tr>
+<tr><td>44</td><td>Certificación pruebas</td><td style="color:var(--danger)">⬜</td><td>6 sem</td><td>—</td><td>Mesa Trabajo</td></tr>
+<tr style="background:var(--surface)"><td rowspan="2"><strong>Comunicaciones</strong></td><td>45</td><td>Plan de comunicación</td><td style="color:var(--danger)">⬜</td><td>—</td><td>—</td><td>Mesa Trabajo</td></tr>
+<tr><td>46</td><td>Estrategia gestión cambio</td><td style="color:var(--danger)">⬜</td><td>—</td><td>—</td><td>Mesa Trabajo</td></tr>
+<tr style="background:var(--surface)"><td rowspan="8"><strong>Extracciones BD</strong></td><td>47</td><td>Parametrización actual Filenet</td><td style="color:var(--success)">✅</td><td>—</td><td>—</td><td>Tecnología</td></tr>
+<tr><td>48</td><td>Campos Portal Intermediarios</td><td style="color:var(--danger)">⬜</td><td>—</td><td>—</td><td>Tecnología</td></tr>
+<tr><td>49-56</td><td>Campos otros canales (8 sistemas)</td><td style="color:var(--danger)">⬜</td><td>—</td><td>—</td><td>Tecnología</td></tr>
+<tr><td>57</td><td>Revisión Infraestructura</td><td style="color:var(--danger)">⬜</td><td>—</td><td>—</td><td>Tecnología</td></tr>
+<tr><td>58</td><td>Request y APIs actuales Filenet</td><td style="color:var(--danger)">⬜</td><td>—</td><td>—</td><td>Tecnología</td></tr>
+<tr><td>59</td><td>Contratos de servicio</td><td style="color:var(--danger)">⬜</td><td>—</td><td>—</td><td>Tecnología</td></tr>
+<tr><td>60</td><td>Campos calculados insumos previos</td><td style="color:var(--danger)">⬜</td><td>—</td><td>—</td><td>Tecnología</td></tr>
+<tr><td>61</td><td>Revisión y aprobación</td><td style="color:var(--danger)">⬜</td><td>—</td><td>—</td><td>Mesa Trabajo</td></tr>
+<tr style="background:var(--surface)"><td><strong>Entregables Valor</strong></td><td>62</td><td>Definir paquetes valor — entregables al negocio</td><td style="color:var(--success)">✅</td><td>—</td><td>20</td><td>Mesa Trabajo</td></tr>
+</tbody>
+</table>
+<h3>Resumen Avance</h3>
+<div style="display:flex;gap:2rem;margin:1rem 0;flex-wrap:wrap">
+<span style="color:var(--success)">✅ Terminadas: 12 (19%)</span>
+<span style="color:var(--warn)">🔄 En proceso: 8 (13%)</span>
+<span style="color:var(--danger)">⬜ No iniciadas: 42 (68%)</span>
+</div>
+<div style="background:var(--surface);padding:1rem;border-radius:8px;margin-top:1rem;border-left:4px solid var(--danger)">
+<p style="color:var(--danger);font-weight:bold">🔴 Ruta crítica identificada:</p>
+<p style="color:var(--text)">Tarea 48 → 18 → 19 → 20 → 22 → 23 → 24 → 27 → 29 → 21</p>
+<p style="color:var(--muted);font-size:0.85rem">Campos Portal → Flujo conceptual → Flujo técnico → Diseño automatización (6 sem) → Reglas → Implementar → Asignación → Implementación funcional (6 sem)</p>
+<p style="color:var(--muted);font-size:0.85rem">MVP funcional: ~15 semanas (Sep 16) | Total tareas: ~21 semanas (Oct 28)</p>
+</div>
+</section>
+<!-- ============ SECCION 7: GANTT ============ -->
+<section id="gantt">
+<h2>7. Gantt - Ruta Critica</h2>
+<p>Cronograma recalculado con plan final. <span style="color:var(--danger)">&#9632;</span> = Ruta critica. Inicio: 4 Jun 2026. Total: 21 semanas.</p>
+<div style="overflow-x:auto">
+<table style="font-size:0.78rem;min-width:1100px">
+<thead><tr>
+<th style="width:30px">ID</th><th style="width:200px">Tarea</th><th style="width:50px">Resp.</th><th style="width:30px">Sem</th>
+<th style="min-width:500px;position:relative;padding:0">
+<div style="display:flex;width:100%;border-bottom:1px solid var(--border)">
+<span style="width:19%;text-align:center;padding:6px 0;border-right:1px solid var(--border)">Jun</span>
+<span style="width:19%;text-align:center;padding:6px 0;border-right:1px solid var(--border)">Jul</span>
+<span style="width:19%;text-align:center;padding:6px 0;border-right:1px solid var(--border)">Ago</span>
+<span style="width:19%;text-align:center;padding:6px 0;border-right:1px solid var(--border)">Sep</span>
+<span style="width:24%;text-align:center;padding:6px 0">Oct</span>
+</div>
+</th>
+<th style="width:30px">RC</th>
+</tr></thead>
+<tbody style="color:var(--text)">
+<tr><td>48</td><td>Campos Portal Interm.</td><td>Tecno</td><td>1</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:0%;width:4.8%;height:18px;background:var(--danger);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#fff;font-weight:bold">1s</div></div></td><td>&#128308;</td></tr>
+<tr><td>18</td><td>Flujo detallado conceptual</td><td>Proc</td><td>2</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:0%;width:9.5%;height:18px;background:var(--danger);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#fff;font-weight:bold">2s</div></div></td><td>&#128308;</td></tr>
+<tr><td>2</td><td>Construir relaciones datos</td><td>Int.Op</td><td>3</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:4.8%;width:14.3%;height:18px;background:var(--accent4);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#fff;font-weight:bold">3s</div></div></td><td></td></tr>
+<tr><td>19</td><td>Flujo tecnico (arquitectura)</td><td>Tecno</td><td>1</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:9.5%;width:4.8%;height:18px;background:var(--danger);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#fff;font-weight:bold">1s</div></div></td><td>&#128308;</td></tr>
+<tr><td>20</td><td><strong>Diseno flujo automatizacion</strong></td><td>Todos</td><td>6</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:14.3%;width:28.6%;height:18px;background:var(--danger);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#fff;font-weight:bold">6 sem</div></div></td><td>&#128308;</td></tr>
+<tr><td>14</td><td>Disenar integraciones</td><td>Tecno</td><td>2</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:9.5%;width:9.5%;height:18px;background:var(--accent4);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#fff;font-weight:bold">2s</div></div></td><td></td></tr>
+<tr><td>15</td><td>Desarrollar integraciones</td><td>Tecno</td><td>4</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:19%;width:19%;height:18px;background:var(--accent4);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#fff;font-weight:bold">4s</div></div></td><td></td></tr>
+<tr><td>9</td><td>Mockup diseno transversal</td><td>Ev.Op</td><td>4</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:19%;width:19%;height:18px;background:var(--accent3);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#000;font-weight:bold">4s</div></div></td><td></td></tr>
+<tr><td>5</td><td>Consolidacion modelo final</td><td>Int.Op</td><td>4</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:19%;width:19%;height:18px;background:var(--accent3);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#000;font-weight:bold">4s</div></div></td><td></td></tr>
+<tr><td>22</td><td>Entendimiento reglas actuales</td><td>Int.Op</td><td>1</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:43%;width:4.8%;height:18px;background:var(--danger);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#fff;font-weight:bold">1s</div></div></td><td>&#128308;</td></tr>
+<tr><td>21</td><td><strong>Implementacion flujo funcional</strong></td><td>Todos</td><td>6</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:43%;width:28.6%;height:18px;background:var(--danger);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#fff;font-weight:bold">6 sem</div></div></td><td>&#128308;</td></tr>
+<tr><td>23</td><td>Estructurar reglas</td><td>Int.Op</td><td>1</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:47.6%;width:4.8%;height:18px;background:var(--danger);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#fff;font-weight:bold">1s</div></div></td><td>&#128308;</td></tr>
+<tr><td>24</td><td>Definir reglas</td><td>Int.Op</td><td>1</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:52.4%;width:4.8%;height:18px;background:var(--danger);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#fff;font-weight:bold">1s</div></div></td><td>&#128308;</td></tr>
+<tr><td>16</td><td>Implementar integraciones</td><td>Tecno</td><td>4</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:38%;width:19%;height:18px;background:var(--accent4);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#fff;font-weight:bold">4s</div></div></td><td></td></tr>
+<tr><td>27</td><td>Implementar reglas Bizagi</td><td>Proc</td><td>2</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:57.1%;width:9.5%;height:18px;background:var(--danger);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#fff;font-weight:bold">2s</div></div></td><td>&#128308;</td></tr>
+<tr><td>29</td><td>Estructurar asignacion</td><td>Int.Op</td><td>1</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:66.7%;width:4.8%;height:18px;background:var(--danger);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#fff;font-weight:bold">1s</div></div></td><td>&#128308;</td></tr>
+<tr><td>30</td><td>Definir reglas asignacion</td><td>Int.Op</td><td>1</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:71.4%;width:4.8%;height:18px;background:var(--accent4);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#fff;font-weight:bold">1s</div></div></td><td></td></tr>
+<tr><td>32</td><td>Parametrizar asignacion</td><td>Int.Op</td><td>1</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:76.2%;width:4.8%;height:18px;background:var(--accent4);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#fff;font-weight:bold">1s</div></div></td><td></td></tr>
+<tr><td>33</td><td>Implementar asignacion</td><td>Int.Op</td><td>1</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:81%;width:4.8%;height:18px;background:var(--accent4);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#fff;font-weight:bold">1s</div></div></td><td></td></tr>
+<tr><td>44</td><td>Certificacion pruebas</td><td>Mesa</td><td>6</td><td><div style="position:relative;height:18px"><div style="position:absolute;left:71.4%;width:28.6%;height:18px;background:var(--accent2);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#fff;font-weight:bold">6 sem</div></div></td><td></td></tr>
+</tbody>
+</table>
+</div>
+<h3>Ruta Critica</h3>
+<p style="color:var(--danger);font-size:0.9rem"><strong>48 &rarr; 18 &rarr; 19 &rarr; 20 &rarr; 22 &rarr; 23 &rarr; 24 &rarr; 27 &rarr; 29 &rarr; 21</strong></p>
+<p style="color:var(--muted);font-size:0.85rem">Campos Portal &rarr; Flujo conceptual &rarr; Flujo tecnico &rarr; <strong>Diseno automatizacion (6 sem)</strong> &rarr; Reglas &rarr; Implementar reglas &rarr; Asignacion &rarr; <strong>Implementacion funcional (6 sem)</strong></p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem">
+<div class="card" style="border-left:4px solid var(--danger)">
+<p><strong>Ruta critica (MVP funcional):</strong></p>
+<p style="font-size:1.2rem;color:var(--danger)">~15 semanas &rarr; Sep 16, 2026</p>
+</div>
+<div class="card" style="border-left:4px solid var(--accent2)">
+<p><strong>Todas las tareas completadas:</strong></p>
+<p style="font-size:1.2rem;color:var(--accent2)">~21 semanas &rarr; Oct 28, 2026</p>
+</div>
+</div>
+<p style="color:var(--muted);font-size:0.85rem;margin-top:1rem">CSV detallado: <code>gantt-mvp-bizagi.csv</code> (importable en Excel/Google Sheets)</p>
+</section>
+<section id="diagramas">
+<h2>8. Diagramas de Arquitectura</h2>
+<p>Diagramas del proyecto. Usa las pestañas del visor draw.io para navegar entre páginas.</p>
+
+<div style="background:var(--surface);padding:1rem;border-radius:8px;margin:1rem 0">
+<h3>Flujo Canal → Gestor Proceso (Draw.io interactivo)</h3>
+<p style="color:var(--muted);font-size:0.85rem;margin-bottom:0.5rem">Pestañas inferiores: Pág 1 = Portal, Pág 2 = Correo</p>
+<iframe src="flujo-canal-gestor-proceso.drawio.html" style="width:100%;height:500px;border:1px solid var(--border);border-radius:4px;background:#fff" loading="lazy"></iframe>
+</div>
+
+<div style="background:var(--surface);padding:1rem;border-radius:8px;margin:1rem 0">
+<h3>Flujo Conceptual — Portal Intermediarios</h3>
+<img src="Flujo conceptual Portal Intermediarios.png" style="width:100%;border-radius:4px;border:1px solid var(--border)" alt="Flujo conceptual Portal Intermediarios" loading="lazy">
+</div>
+
+<p style="color:var(--muted);font-size:0.85rem">
+Si los diagramas no cargan: <a href="flujo-canal-gestor-proceso.drawio.html" style="color:var(--accent3)" target="_blank">Draw.io</a> |
+<a href="Flujo conceptual Portal Intermediarios.png" style="color:var(--accent3)" target="_blank">PNG Portal</a>
+</p>
+</section>
+
+<!-- ============ SECCIÓN 9: DOCUMENTACIÓN FILENET ============ -->
+<section id="filenet">
+<h2>9. Documentación Filenet</h2>
+<p>Documentación técnica de Filenet. Referencia para la migración a Bizagi.</p>
+
+<div style="background:var(--surface);padding:1rem;border-radius:8px;margin:1rem 0">
+<h3>Flujo de Consecutivos y Trazabilidad</h3>
+<iframe src="flujo-consecutivos-filenet.html" style="width:100%;height:600px;border:1px solid var(--border);border-radius:4px;background:#fff" loading="lazy"></iframe>
+</div>
+
+<div style="background:var(--surface);padding:1rem;border-radius:8px;margin:1rem 0">
+<h3>Reglas de Negocio — Escritorios, Flujos y Transiciones</h3>
+<iframe src="reglas-negocio-filenet.html" style="width:100%;height:600px;border:1px solid var(--border);border-radius:4px;background:#fff" loading="lazy"></iframe>
+</div>
+
+<p style="color:var(--muted);font-size:0.85rem">
+Si los iframes no cargan:
+<a href="flujo-consecutivos-filenet.html" style="color:var(--accent3)" target="_blank">Consecutivos</a> |
+<a href="reglas-negocio-filenet.html" style="color:var(--accent3)" target="_blank">Reglas de Negocio</a>
+</p>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer style="margin-top:3rem;padding:1.5rem;background:var(--surface);border-radius:8px;text-align:center">
+<p style="color:var(--muted);font-size:0.85rem">
+Documento generado a partir de 16 sesiones (Abr 20 – Jun 3, 2026).<br>
+Para actualizar: cargar nuevas transcripciones en <code>docs/Sesiones-Bizagi/</code> y solicitar regeneración.<br>
+Fuentes: transcripciones (.md) + plan de trabajo (.csv) + integraciones (.txt) + diagramas (.drawio.html)
+</p>
+</footer>
+
+</div>
+</body>
+</html>
